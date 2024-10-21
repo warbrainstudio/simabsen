@@ -54,6 +54,7 @@ class Cuti extends AppBackend
     $cuti = $this->CutiModel->getDetail(['cuti.id' => $ref]);
     $pegawai = $this->PegawaiModel->getDetail(['pegawai.absen_pegawai_id' => @$cuti->absen_pegawai_id]);
     $unitList = $this->init_list($this->UnitModel->getAll([], 'nama_unit', 'asc'), 'nama_unit', 'nama_unit', @$pegawai->departemen);
+    $action = (!is_null(@$cuti->jenis_cuti)) ? 'Edit' : 'New';
     // END ## Ref
 
     $data = array(
@@ -63,9 +64,11 @@ class Cuti extends AppBackend
         'is_load_partial' => 1,
         'pegawai_id' => @$pegawai->absen_pegawai_id,
         'pegawai_nama_lengkap' => @$pegawai->nama_lengkap,
+        'action' => $action,
       )),
       'key' => $ref,
       'card_title' => $actionLabel . $this->_pageTitle,
+      'actionLabel' => $actionLabel,
       'controller' => $this,
       'is_mobile' => $agent->isMobile(),
       'cuti' => $cuti,
@@ -76,6 +79,29 @@ class Cuti extends AppBackend
     $this->template->set('title', $data['card_title'] . ' | ' . $data['app']->app_name, TRUE);
     $this->template->load_view('form', $data, TRUE);
     $this->template->render();
+  }
+
+  public function detail()
+  {
+    $this->handle_ajax_request();
+
+    $agent = new Mobile_Detect;
+    $ref = $this->input->get('ref');
+    $ref = (!is_null($ref) && is_numeric($ref)) ? $ref : null;
+    $actionLabel = '<span class="badge badge-info">View</span> ';
+
+    $cuti = $this->CutiModel->getDetail(['cuti.id' => $ref]);
+    $data = array(
+      'app' => $this->app(),
+      'main_js' => $this->load_main_js('cuti', false, array(
+        'key' => $ref,
+      )),
+      'card_title' => $actionLabel . $this->_pageTitle,
+      'controller' => $this,
+      'is_mobile' => $agent->isMobile(),
+      'cuti' => $cuti,
+    );
+    $this->load->view('view', $data);
   }
 
   public function ajax_get_all()
@@ -116,35 +142,7 @@ class Cuti extends AppBackend
     echo json_encode($this->CutiModel->approve($id));
   }
 
-  /*public function detail()
-  {
-    //$agent = new Mobile_Detect;
-    $ref = $this->input->get('ref');
-    $ref = (!is_null($ref) && is_numeric($ref)) ? $ref : null;
-    $actionLabel = '<span class="badge badge-info">View</span> ';
-
-    $pegawai = $this->PegawaiModel->getDetail(['pegawai.absen_pegawai_id' => $ref]);
-    $data = array(
-      'app' => $this->app(),
-      'main_js' => $this->load_main_js('pegawai', false, array(
-        'action_route' => 'detail',
-        'key' => $ref,
-        'pegawai_idfinger' => @$pegawai->absen_id,
-        'pegawai' => $pegawai,
-      )),
-      'card_title' => 'Data Absen ID : '.@$pegawai->absen_id,
-      'controller' => $this,
-      'isnull' => 'false',
-      //'is_mobile' => $agent->isMobile(),
-      'pegawai' => $pegawai,
-    );
-    //$this->template->set_template('sb_admin_partial');
-    $this->template->set('title', $data['card_title'] . ' | ' . $data['app']->app_name, TRUE);
-    $this->template->load_view('view', $data, TRUE);
-    $this->template->render();
-  }
-
-  public function excel()
+  /*public function excel()
   {
     try {
         $absen_id = $this->input->get('absen_id');

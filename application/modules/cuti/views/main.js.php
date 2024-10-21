@@ -6,6 +6,7 @@
     var _table = "table-cuti";
     var _modal = "modal-form-cuti";
     var _form = "form-cuti";
+    var _modal_view = "modal-view-cuti";
     var _p_search = "<?= (isset($_GET['q'])) ? $_GET['q'] : '' ?>";
     var _is_load_partial = "<?= (isset($is_load_partial)) ? $is_load_partial : '0' ?>";
     var _is_first_load = (_key != null && _key != "") ? true : false;
@@ -13,9 +14,20 @@
     var _pegawai_namaLengkap = "<?= @$pegawai_nama_lengkap ?>";
     var _pengajuan_cuti = document.querySelector("."+_section+"-pengajuan-cuti");
     var _keterangan_cuti = document.querySelector("."+_section+"-keterangan-cuti");
-    _pengajuan_cuti.style.display = 'none';
-    _keterangan_cuti.style.display = 'none';
+    var ijin = $("#" + _modal + " ." + _section + "-jenis_cuti-4");
+    var lain = $("#" + _modal + " ." + _section + "-jenis_cuti-5");
+    var _action = "<?= @$action ?>";
 
+    if(_action=='New'){
+      _pengajuan_cuti.style.display = 'none';
+      _keterangan_cuti.style.display = 'none';
+    }
+    if(ijin.prop('checked') || lain.prop('checked')){
+      _keterangan_cuti.style.display = 'block';
+    }else{
+      _keterangan_cuti.style.display = 'none';
+    }
+    
     // Init on load
     initSelect2_enter(".cuti-absen_pegawai_id", "Cari dengan ID Absen / Nama Lengkap...", "<?= base_url('ref/ajax_search_pegawai') ?>", formatSelect2Result_pegawai);
     load_select2DefaultValue();
@@ -147,7 +159,7 @@
                 }else{
                   return `
                       <div class="action" style="display: flex; flex-direction: row;">
-                        <a href="<?= base_url('cuti/detail?ref=') ?>${row.id}" modal-id="modal-view-cuti" class="btn btn-sm btn-success x-load-modal-partial" title="Rincian"><i class="zmdi zmdi-eye"></i></a>&nbsp;
+                        <a href="<?= base_url('cuti/detail?ref=') ?>${row.id}" modal-id="${_modal_view}" class="btn btn-sm btn-success x-load-modal-partial" title="Rincian"><i class="zmdi zmdi-eye"></i></a>&nbsp;
                         <a href="<?= base_url('cuti/input?ref=') ?>${row.id}" modal-id="modal-form-cuti" class="btn btn-sm btn-light x-load-modal-partial" title="Ubah"><i class="zmdi zmdi-edit"></i> Ubah</a>&nbsp;
                         <a href="<?= base_url('cuti/delete?ref=') ?>${row.id}" class="btn btn-sm btn-danger action-delete" title="Hapus"><i class="zmdi zmdi-delete"></i> Hapus</a>
                       </div>
@@ -253,56 +265,94 @@
     });
 
     $("#" + _modal + " ." + _section + "-jenis_cuti-0").on("change", function(e) {
-      var jatahCuti = '<?= $pegawai->jatah_cuti_tahunan ?>';
-      var _pengajuan_cuti = document.querySelector("."+_section+"-pengajuan-cuti");
-      var _keterangan_cuti = document.querySelector("."+_section+"-keterangan-cuti");
-      if (jatahCuti=='' || jatahCuti=='0'){
-        notify("Jatah cuti tahunan sudah habis. tidak bisa mengajukan cuti tahunan");
-        _pengajuan_cuti.style.display = 'none';
-        _keterangan_cuti.style.display = 'none';
-      }else{
-        notify("Sisa cuti tahunan : "+jatahCuti);
-        _pengajuan_cuti.style.display = 'block';
+      var _pegawai = document.querySelector("."+_section+"-absen_pegawai_id");
+      if(_pegawai.value==''){
+        notify("Pilih pegawai terlebih dahulu","danger");
+        this.checked = false;
+      } else {
+        var jatahCuti = '<?= $pegawai->jatah_cuti_tahunan ?>';
+        var _pengajuan_cuti = document.querySelector("."+_section+"-pengajuan-cuti");
+        var _keterangan_cuti = document.querySelector("."+_section+"-keterangan-cuti");
+        if (jatahCuti=='' || jatahCuti=='0'){
+          notify("Jatah cuti tahunan sudah habis. tidak bisa mengajukan cuti tahunan","warning");
+          _pengajuan_cuti.style.display = 'none';
+          _keterangan_cuti.style.display = 'none';
+        }else{
+          notify("Sisa cuti tahunan : "+jatahCuti, "success");
+          _pengajuan_cuti.style.display = 'block';
+          _keterangan_cuti.style.display = 'none';
+        }
         _keterangan_cuti.style.display = 'none';
       }
-      _keterangan_cuti.style.display = 'none';
     });
 
     $("#" + _modal + " ." + _section + "-jenis_cuti-1").on("change", function(e) {
       var _pengajuan_cuti = document.querySelector("."+_section+"-pengajuan-cuti");
       var _keterangan_cuti = document.querySelector("."+_section+"-keterangan-cuti");
-      _pengajuan_cuti.style.display = 'block';
-      _keterangan_cuti.style.display = 'none';
+      var _pegawai = document.querySelector("."+_section+"-absen_pegawai_id");
+      if(_pegawai.value==''){
+        notify("Pilih pegawai terlebih dahulu","danger");
+        this.checked = false;
+      }else{
+        _pengajuan_cuti.style.display = 'block';
+        _keterangan_cuti.style.display = 'none';
+      }
     });
 
     $("#" + _modal + " ." + _section + "-jenis_cuti-2").on("change", function(e) {
       var _pengajuan_cuti = document.querySelector("."+_section+"-pengajuan-cuti");
       var _keterangan_cuti = document.querySelector("."+_section+"-keterangan-cuti");
-      _pengajuan_cuti.style.display = 'block';
-      _keterangan_cuti.style.display = 'none';
+      var _pegawai = document.querySelector("."+_section+"-absen_pegawai_id");
+      if(_pegawai.value==''){
+        notify("Pilih pegawai terlebih dahulu","danger");
+        this.checked = false;
+      }else{
+        _pengajuan_cuti.style.display = 'block';
+        _keterangan_cuti.style.display = 'none';
+      }
     });
 
     $("#" + _modal + " ." + _section + "-jenis_cuti-3").on("change", function(e) {
       var _pengajuan_cuti = document.querySelector("."+_section+"-pengajuan-cuti");
       var _keterangan_cuti = document.querySelector("."+_section+"-keterangan-cuti");
-      var _cuti = document.querySelector("."+_section+"-jenis_cuti");
-      _pengajuan_cuti.style.display = 'block';
-      _keterangan_cuti.style.display = 'none';
-      _cuti.value = "";
+      var _pegawai = document.querySelector("."+_section+"-absen_pegawai_id");
+      if(_pegawai.value==''){
+        notify("Pilih pegawai terlebih dahulu","danger");
+        this.checked = false;
+      }else{
+        _pengajuan_cuti.style.display = 'block';
+        _keterangan_cuti.style.display = 'none';
+      }
     });
 
     $("#" + _modal + " ." + _section + "-jenis_cuti-4").on("change", function(e) {
       var _pengajuan_cuti = document.querySelector("."+_section+"-pengajuan-cuti");
       var _keterangan_cuti = document.querySelector("."+_section+"-keterangan-cuti");
-      _pengajuan_cuti.style.display = 'block';
-      _keterangan_cuti.style.display = 'block';
+      var _jenis_cuti = document.querySelector("."+_section+"-jenis_cuti");
+      var _pegawai = document.querySelector("."+_section+"-absen_pegawai_id");
+      if(_pegawai.value==''){
+        notify("Pilih pegawai terlebih dahulu","danger");
+        this.checked = false;
+      }else{
+        _pengajuan_cuti.style.display = 'block';
+        _keterangan_cuti.style.display = 'block';
+        _jenis_cuti.value = '';
+      }
     });
 
     $("#" + _modal + " ." + _section + "-jenis_cuti-5").on("change", function(e) {
       var _pengajuan_cuti = document.querySelector("."+_section+"-pengajuan-cuti");
       var _keterangan_cuti = document.querySelector("."+_section+"-keterangan-cuti");
-      _pengajuan_cuti.style.display = 'block';
-      _keterangan_cuti.style.display = 'block';
+      var _jenis_cuti = document.querySelector("."+_section+"-jenis_cuti");
+      var _pegawai = document.querySelector("."+_section+"-absen_pegawai_id");
+      if(_pegawai.value==''){
+        notify("Pilih pegawai terlebih dahulu","danger");
+        this.checked = false;
+      }else{
+        _pengajuan_cuti.style.display = 'block';
+        _keterangan_cuti.style.display = 'block';
+        _jenis_cuti.value = '';
+      }
     });
 
     // Handle submit

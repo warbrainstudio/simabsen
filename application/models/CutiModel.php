@@ -49,22 +49,38 @@ class CutiModel extends CI_Model
 
   public function getDetail($params = array())
   {
-    return $this->db->where($params)->get($this->_table)->row();
+    $this->db->select('
+      cuti.*,
+      pegawai.absen_pegawai_id,
+      pegawai.nama_lengkap,
+      unit.nama_unit
+    ');
+    $this->db->join('pegawai', 'pegawai.absen_pegawai_id = cuti.absen_pegawai_id', 'left');
+    $this->db->join('unit', 'unit.nama_unit = pegawai.departemen', 'left');
+    $this->db->where($params);
+    $data = $this->db->get($this->_table);
+    return $data->row();
   }
 
   public function insert()
   {
     $response = array('status' => false, 'data' => 'No operation.');
-
+    $jenisDetail = $this->input->post('jeniscutiDetail');
+    $jenis_cuti = '';
+    if(!empty($jenisDetail)){
+      $jenis_cuti = $jenisDetail;
+    }else{
+      $jenis_cuti = $this->input->post('jeniscuti');
+    }
     try {
-      $this->jenis_cuti = $this->input->post('jeniscuti');
+      $this->jenis_cuti = $jenis_cuti;
       $this->tanggal_pengajuan = $this->input->post('tanggal_pengajuan');
       $this->absen_pegawai_id = $this->input->post('absen_pegawai_id');
       $this->awal_cuti = $this->input->post('awalcuti');
       $this->akhir_cuti = $this->input->post('akhircuti');
       $this->tanggal_bekerja = $this->input->post('tanggalbekerja');
-      $this->alamat_cuti = $this->input->post('alamatcuti');
-      $this->telepon_cuti = $this->input->post('teleponcuti');
+      $this->alamat_cuti = $this->input->post('alamatCuti');
+      $this->telepon_cuti = $this->input->post('handphoneCuti');
       $this->jumlah_persetujuan = $this->input->post('jumlahpersetujuan');
       $this->status_persetujuan = $this->input->post('statuspersetujuan');
       $this->created_by = $this->session->userdata('user')['id'];
