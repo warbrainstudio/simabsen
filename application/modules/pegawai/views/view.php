@@ -71,9 +71,6 @@
                             <button class="btn btn-sm btn-success" onclick="window.location.href='<?= base_url('pegawai/excel/?ref=cxsmi&absen_pegawai_id='.@$pegawai->absen_pegawai_id) ?>'">
                                 <i class="zmdi zmdi-download"></i> Download Data (Excel)
                             </button>
-                            <button class="btn btn-sm btn-secondary pegawai-cuti-add" data-toggle="modal" data-target="#modal-form-cuti">
-                                <i class="zmdi zmdi-run"></i> Ajukan Cuti
-                            </button>
                             <button class="btn btn-sm btn-dark pegawai-backButton">
                                 <i class="zmdi zmdi-long-arrow-return"></i> Kembali
                             </button> 

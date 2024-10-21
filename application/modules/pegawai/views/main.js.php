@@ -8,10 +8,8 @@
     var _table_null = "table-null-pegawai";
     var _table_histori = "table-histori-attendance";
     var _modal = "modal-form-pegawai";
-    var _modal_cuti = "modal-form-cuti";
     var _modal_import = "modal-form-import-pegawai";
     var _form = "form-pegawai";
-    var _form_cuti = "form-cuti";
     var _form_import = "form-import-pegawai";
 
     // Initialize DataTables: Index
@@ -525,90 +523,6 @@
         };
       });
     };
-
-    $("#" + _section).on("click", "button." + _section + "-cuti-add", function(e) {
-      e.preventDefault();
-      resetForm();
-      var _pengajuan_cuti = document.querySelector("."+_section_cuti+"-pengajuan-cuti");
-      var _keterangan_cuti = document.querySelector("."+_section_cuti+"-keterangan-cuti");
-      _pengajuan_cuti.style.display = 'none';
-      _keterangan_cuti.style.display = 'none';
-    });
-
-    $("#" + _modal_cuti + " ." + _section_cuti + "-jenis_cuti-0").on("change", function(e) {
-      var jatahCuti = '<?= $pegawai->jatah_cuti_tahunan ?>';
-      var _pengajuan_cuti = document.querySelector("."+_section_cuti+"-pengajuan-cuti");
-      var _keterangan_cuti = document.querySelector("."+_section_cuti+"-keterangan-cuti");
-      if (jatahCuti=='' || jatahCuti=='0'){
-        notify("Jatah cuti tahunan sudah habis. tidak bisa mengajukan cuti tahunan");
-        _pengajuan_cuti.style.display = 'none';
-      }else{
-        notify("Sisa cuti tahunan : "+jatahCuti);
-        _pengajuan_cuti.style.display = 'block';
-      }
-      _keterangan_cuti.style.display = 'none';
-    });
-
-    $("#" + _modal_cuti + " ." + _section_cuti + "-jenis_cuti-1").on("change", function(e) {
-      var _pengajuan_cuti = document.querySelector("."+_section_cuti+"-pengajuan-cuti");
-      var _keterangan_cuti = document.querySelector("."+_section_cuti+"-keterangan-cuti");
-      _pengajuan_cuti.style.display = 'block';
-      _keterangan_cuti.style.display = 'none';
-    });
-
-    $("#" + _modal_cuti + " ." + _section_cuti + "-jenis_cuti-2").on("change", function(e) {
-      var _pengajuan_cuti = document.querySelector("."+_section_cuti+"-pengajuan-cuti");
-      var _keterangan_cuti = document.querySelector("."+_section_cuti+"-keterangan-cuti");
-      _pengajuan_cuti.style.display = 'block';
-      _keterangan_cuti.style.display = 'none';
-    });
-
-    $("#" + _modal_cuti + " ." + _section_cuti + "-jenis_cuti-3").on("change", function(e) {
-      var _pengajuan_cuti = document.querySelector("."+_section_cuti+"-pengajuan-cuti");
-      var _keterangan_cuti = document.querySelector("."+_section_cuti+"-keterangan-cuti");
-      _pengajuan_cuti.style.display = 'block';
-      _keterangan_cuti.style.display = 'none';
-    });
-
-    $("#" + _modal_cuti + " ." + _section_cuti + "-jenis_cuti-4").on("change", function(e) {
-      var _pengajuan_cuti = document.querySelector("."+_section_cuti+"-pengajuan-cuti");
-      var _keterangan_cuti = document.querySelector("."+_section_cuti+"-keterangan-cuti");
-      _pengajuan_cuti.style.display = 'block';
-      _keterangan_cuti.style.display = 'block';
-    });
-
-    $("#" + _modal_cuti + " ." + _section_cuti + "-jenis_cuti-5").on("change", function(e) {
-      var _pengajuan_cuti = document.querySelector("."+_section_cuti+"-pengajuan-cuti");
-      var _keterangan_cuti = document.querySelector("."+_section_cuti+"-keterangan-cuti");
-      _pengajuan_cuti.style.display = 'block';
-      _keterangan_cuti.style.display = 'block';
-    });
-
-    $("#" + _modal_cuti + " ." + _section_cuti + "-action-save").on("click", function(e) {
-      e.preventDefault();
-      $.ajax({
-        type: "post",
-        url: "<?php echo base_url('cuti/ajax_save/') ?>" + _key,
-        data: $("#" + _form_cuti).serialize(),
-        success: function(response) {
-            console.log(response); // Log raw response for debugging
-            try {
-                var parsedResponse = JSON.parse(response);
-                if (parsedResponse.status === true) {
-                    resetForm();
-                    $("#" + _modal_cuti).modal("hide");
-                    $("#" + _table_histori).DataTable().order([1, 'desc']).draw();
-                    notify(parsedResponse.data, "success");
-                } else {
-                    notify(parsedResponse.data, "danger");
-                }
-            } catch (e) {
-                console.error("Parsing error:", e);
-                notify("An error occurred while processing the response.", "danger");
-            }
-        }
-      });
-    });
 
     $("#" + _table_histori).on("click", "a.action-delete-histori", function(e) {
       e.preventDefault();
