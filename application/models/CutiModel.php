@@ -112,7 +112,7 @@ class CutiModel extends CI_Model
             $currentTimestamp = strtotime("+1 day", $currentTimestamp);
         }
     } else {
-        echo "Invalid date range.";
+      $response = array('status' => false, 'data' => 'Invalid Date Range');
     }
 
 
