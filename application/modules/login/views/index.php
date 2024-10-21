@@ -38,25 +38,6 @@
     .login__block {
       margin: 1rem;
     }
-
-    .login-flex {
-      display: flex;
-    }
-
-    .login-left {
-      flex: 0.7;
-    }
-
-    .login-left img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: left;
-    }
-
-    .login-right {
-      flex: 1;
-    }
   </style>
 </head>
 
@@ -73,42 +54,33 @@
     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" />
 
     <div class="login">
-      <div class="login__block active" style="max-width: <?= (!$app->is_mobile) ? '800px' : '400px' ?>; padding: 0;">
-        <div class="login-flex">
-          <?php if (!$app->is_mobile) : ?>
-            <div class="login-left">
-              <img src="<?= base_url('themes/_public/img/office.png') ?>" />
-            </div>
-          <?php endif ?>
-          <div class="login-right">
-            <div class="login__block__header mt-0" style="background-color: #6fb7c6; border-radius: 0;">
-              <img src="<?php echo base_url('themes/_public/img/logo/logo.png') ?>" />
-              <span style="font-weight: 500;">HRMIS</span>
-            </div>
+      <div class="login__block active" style="max-width: 400px;">
+        <div class="login__block__header">
+          <img src="<?php echo base_url('themes/_public/img/logo/logo.png') ?>" />
+          <span style="font-weight: 500;">SIMABSEN</span>
+        </div>
 
-            <div class="login__block__body">
-              <div class="form-group form-group--float form-group--centered">
-                <input type="text" name="username" class="form-control login-username" style="cursor: text;" readonly onfocus="this.removeAttribute('readonly');" />
-                <label>Username</label>
-                <i class="form-group__bar"></i>
-              </div>
-
-              <div class="form-group form-group--float form-group--centered">
-                <input type="password" name="password" class="form-control login-password" style="cursor: text;" readonly onfocus="this.removeAttribute('readonly');" />
-                <label>Password</label>
-                <i class="form-group__bar"></i>
-              </div>
-
-              <button class="btn btn-primary page-action-login" style="background-color: #6fb7c6;">
-                Masuk
-                <i class="zmdi zmdi-long-arrow-right"></i>
-              </button>
-            </div>
-
-            <div style="border-top: 1px solid #eceff1; padding: 20px 10px; color: #999;" class="bg-light mt-4">
-              &copy; <?= isset($app->company_name) ? $app->company_name : '(not-set)' ?>
-            </div>
+        <div class="login__block__body">
+          <div class="form-group form-group--float form-group--centered">
+            <input type="text" name="username" class="form-control login-username" style="cursor: text;" readonly onfocus="this.removeAttribute('readonly');" />
+            <label>Username</label>
+            <i class="form-group__bar"></i>
           </div>
+
+          <div class="form-group form-group--float form-group--centered">
+            <input type="password" name="password" class="form-control login-password" style="cursor: text;" readonly onfocus="this.removeAttribute('readonly');" />
+            <label>Password</label>
+            <i class="form-group__bar"></i>
+          </div>
+
+          <button class="btn btn-primary rounded page-action-login">
+            Masuk
+            <i class="zmdi zmdi-long-arrow-right"></i>
+          </button>
+        </div>
+
+        <div style="border-top: 1px solid #eceff1; padding: 20px 10px; color: #999;" class="bg-light mt-4">
+          &copy; PT. Karsa Abdi Husada
         </div>
       </div>
     </div>

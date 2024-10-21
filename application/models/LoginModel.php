@@ -26,8 +26,6 @@ class LoginModel extends CI_Model
     $username = $params['username'];
     $password = $params['password'];
 
-    $this->db->select('user.*, unit.uid as unit_uid');
-    $this->db->join('unit', 'unit.nama_unit = user.unit', 'left');
     $this->db->where('password', md5($password));
     $this->db->group_start();
     $this->db->where('username', $username);

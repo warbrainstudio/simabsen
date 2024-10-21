@@ -42,7 +42,6 @@ class Login extends AppBackend
           'nama_lengkap' => $temp->nama_lengkap,
           'role' => $temp->role,
           'unit' => $temp->unit,
-          'unit_uid' => $temp->unit_uid,
           'sub_unit' => $temp->sub_unit,
           'profile_photo' => $temp->profile_photo,
           'token' => $temp->token,
