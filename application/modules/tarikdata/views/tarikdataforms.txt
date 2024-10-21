@@ -1,0 +1,36 @@
+<div class="modal fade" id="modal-form-tarikdata" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title pull-left">
+          <?= (isset($card_title)) ? $card_title : 'Form' ?>
+        </h5>
+      </div>
+      <div class="spinner">
+        <div class="lds-hourglass"></div>
+      </div>
+      <div class="modal-body">
+        <form action="<?php echo site_url('tarikdata/ajax_fetch_data'); ?>" method="get">
+            Select Machine:
+            <select name="machine">
+                <option value="mesin1" <?php echo ($this->input->get('machine') === 'mesin1') ? 'selected' : ''; ?>>Mesin 1</option>
+                <option value="mesin2" <?php echo ($this->input->get('machine') === 'mesin2') ? 'selected' : ''; ?>>Mesin 2</option>
+                <option value="all" <?php echo ($this->input->get('machine') === 'all') ? 'selected' : ''; ?>>All</option>
+            </select><br><br>
+            Comm Key: <input type="text" name="key" size="5" value="0"><br><br>
+            User ID: <input type="text" name="user_id" value="<?php echo htmlspecialchars($this->input->get('user_id')); ?>" size="10"><br><br>
+            Start Date: <input type="date" name="start_date" value="<?php echo htmlspecialchars($this->input->get('start_date')); ?>"><br>
+            End Date: <input type="date" name="end_date" value="<?php echo htmlspecialchars($this->input->get('end_date')); ?>"><br><br>
+            Status:
+            <input type="radio" name="status" value="0" <?php echo ($this->input->get('status') === '0') ? 'checked' : ''; ?>> Masuk
+            <input type="radio" name="status" value="1" <?php echo ($this->input->get('status') === '1') ? 'checked' : ''; ?>> Pulang
+            <input type="radio" name="status" value="all" <?php echo ($this->input->get('status') === 'all') ? 'checked' : ''; ?>> All Status
+            <br><br>
+
+            <input type="submit" value="Search">
+            <input type="button" value="Refresh" onclick="window.location.href='<?php echo site_url('tarikdata'); ?>';">
+        </form>
+        </div>
+    </div>
+  </div>
+</div>

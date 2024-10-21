@@ -1,0 +1,93 @@
+<section id="pegawai">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title"><?php echo (isset($card_title)) ? $card_title : '' ?></h4>
+            <h6 class="card-subtitle"><?php echo (isset($card_subTitle)) ? $card_subTitle : '' ?></h6>
+        <?php if($isnull=='true') : ?>
+            <div class="col-xs-12 col-sm-9">
+                <div class="row">
+                    <div class="table-action">
+                        <div class="buttons">
+                            <button class="btn btn-sm btn-dark pegawai-backButton">
+                            <i class="zmdi zmdi-long-arrow-return"></i> Kembali
+                            </button> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane active fade show" id="tab-histori_attendance" role="tabpanel">
+                <div class="pt-4">
+                    <?php require_once(APPPATH . 'modules/pegawai/views/histori_attendance.php') ?>
+                </div>
+            </div>
+        <?php else : ?>
+            <?php if (!is_null(@$pegawai->updated_date) && !empty(@$pegawai->updated_date)) : ?>
+                <div class="alert alert-light border p-3 mt-3 mb-2">
+                    <i class="zmdi zmdi-info"></i>
+                    Terakhir diubah pada <?= @$pegawai->updated_date ?>
+                </div>
+            <?php endif ?>
+
+            <div class="col-xs-12 col-sm-9">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="form-group form-group-auto">
+                            <label>Nama Lengkap</label>
+                            <div class="form-control auto-filled-text-nama"><?= @$pegawai->nama_lengkap ?>&nbsp;</div>
+                        </div>
+                        <div class="form-group form-group-auto">
+                            <label>Departemen</label>
+                            <div class="form-control auto-filled-text-departemen">
+                                <?php if (!is_null(@$pegawai->departemen) && !empty(@$pegawai->departemen)) : ?>
+                                    <?=@$pegawai->departemen?>
+                                <?php else : ?>
+                                    -
+                                <?php endif?>&nbsp;</div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <div class="form-group form-group-auto">
+                            <label>Nomor PIN</label>
+                            <div class="form-control auto-filled-text-nomorpin">
+                                <?php if (!is_null(@$pegawai->nomorpin) && !empty(@$pegawai->nomorpin)) : ?>
+                                    <?=@$pegawai->nomorpin?>
+                                <?php else : ?>
+                                    -
+                                <?php endif?>&nbsp;</div>
+                        </div>
+                        <div class="form-group form-group-auto">
+                            <label>Jatah Cuti Tahunan</label>
+                            <div class="form-control auto-filled-text-jatah_cuti_tahunan">
+                                <?php if (!is_null(@$pegawai->jatah_cuti_tahunan) && !empty(@$pegawai->jatah_cuti_tahunan)) : ?>
+                                    <?=@$pegawai->jatah_cuti_tahunan?>
+                                <?php else : ?>
+                                    0
+                                <?php endif?>&nbsp;</div>
+                        </div>
+                    </div>
+                    <div class="table-action">
+                        <?php include_once('form_cuti.php') ?>
+                        <div class="buttons">
+                            <button class="btn btn-sm btn-success" onclick="window.location.href='<?= base_url('pegawai/excel/?ref=cxsmi&absen_pegawai_id='.@$pegawai->absen_pegawai_id) ?>'">
+                                <i class="zmdi zmdi-download"></i> Download Data (Excel)
+                            </button>
+                            <button class="btn btn-sm btn-secondary pegawai-cuti-add" data-toggle="modal" data-target="#modal-form-cuti">
+                                <i class="zmdi zmdi-run"></i> Ajukan Cuti
+                            </button>
+                            <button class="btn btn-sm btn-dark pegawai-backButton">
+                                <i class="zmdi zmdi-long-arrow-return"></i> Kembali
+                            </button> 
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            </div>
+            <div class="tab-pane active fade show" id="tab-histori_attendance" role="tabpanel">
+                <div class="pt-4">
+                    <?php require_once(APPPATH . 'modules/pegawai/views/histori_attendance.php') ?>
+                </div>
+            </div>
+        </div>
+        <?php endif ?>
+    </div>
+</section>
