@@ -66,7 +66,6 @@
                         </div>
                     </div>
                     <div class="table-action">
-                        <?php include_once('form_cuti.php') ?>
                         <div class="buttons">
                             <button class="btn btn-sm btn-success" onclick="window.location.href='<?= base_url('pegawai/excel/?ref=cxsmi&absen_pegawai_id='.@$pegawai->absen_pegawai_id) ?>'">
                                 <i class="zmdi zmdi-download"></i> Download Data (Excel)

@@ -91,6 +91,31 @@ class CutiModel extends CI_Model
       $response = array('status' => false, 'data' => 'Failed to save your data.');
     };
 
+    $awalCuti = $this->input->post('awalcuti');
+    $akhirCuti = $this->input->post('akhircuti');
+    $awalTimestamp = strtotime($awalCuti);
+    $akhirTimestamp = strtotime($akhirCuti);
+
+    // Check if the dates are valid
+    if ($awalTimestamp !== false && $akhirTimestamp !== false && $awalTimestamp <= $akhirTimestamp) {
+        $currentTimestamp = $awalTimestamp;
+        $attendancelog_tes = 'attendancelog';
+        while ($currentTimestamp <= $akhirTimestamp) {
+            $currentDate = date('Y-m-d', $currentTimestamp);
+            $data = [
+              'absen_id' => $this->input->post('absen_pegawai_id'),
+              'tanggal_absen' => $currentDate,
+              'status' => "3",
+              'created_by' => $this->session->userdata('user')['id']
+            ];
+            $this->db->insert($attendancelog_tes, $data);
+            $currentTimestamp = strtotime("+1 day", $currentTimestamp);
+        }
+    } else {
+        echo "Invalid date range.";
+    }
+
+
     return $response;
   }
 

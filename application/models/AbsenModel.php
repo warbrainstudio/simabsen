@@ -18,7 +18,7 @@ class AbsenModel extends CI_Model
           COALESCE(p.nama_lengkap, '-') AS nama,
           COALESCE(NULLIF(p.departemen, ''), '-') AS dept,
           COALESCE(NULLIF(p.nomorpin, ''), '-') AS nopin,
-          (CASE WHEN att.status = 0 THEN 'Masuk' ELSE 'Pulang' END) AS nama_status,
+          (CASE WHEN att.status = 0 THEN 'Masuk' WHEN att.status = 3 THEN 'Cuti' ELSE 'Pulang' END) AS nama_status,
           (CASE WHEN att.verified = 1 THEN 'Finger' ELSE 'Input' END) AS verifikasi
         FROM attendancelog att
         LEFT JOIN pegawai p ON att.absen_id = p.absen_pegawai_id
