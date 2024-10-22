@@ -12,14 +12,11 @@
                     </a>
                 </div>
             </div>
-
-            <?php include_once('form.php') ?>
-
             <div class="table-responsive">
                 <table id="table-cuti" class="table table-bordered">
                     <thead class="thead-default">
                         <tr>
-                            <th width="100">No</th>
+                            <th width="30">No</th>
                             <th>TANGGAL</th>
                             <th>ID</th>
                             <th>JENIS</th>

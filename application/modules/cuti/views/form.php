@@ -13,12 +13,14 @@
         <form id="form-cuti" autocomplete="off">
           <!-- CSRF -->
           <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" />
+          <input type="hidden" name="ref" value="<?= $key ?>" readonly />
 
           <div class="row">
             <div class="col-xs-12 col-sm-6">
               <div class="form-group">
                 <label>Tanggal Pengajuan</label>
                 <input type="date" name="tanggal_pengajuan" class="form-control cuti-tanggal_pengajuan" maxlength="100" value="<?= (@$cuti->tanggal_pengajuan == '') ? $date=date('Y-m-d') : @$cuti->tanggal_pengajuan ?>" required/>
+                
               </div>
             </div>
             <div class="col-xs-12 col-sm-6">
@@ -97,8 +99,8 @@
                   <i class="form-group__bar"></i>
                 </div>
                 <div class="form-group">
-                  <label>No.Handphone</label>
-                  <input type="number" name="handphoneCuti" class="form-control cuti-telepon_cuti" maxlength="20" placeholder="No.Handphone" value="<?= @$cuti->telepon_cuti ?>" />
+                  <label>Telepon</label>
+                  <input type="number" name="teleponCuti" class="form-control cuti-telepon_cuti" maxlength="20" placeholder="No.Handphone" value="<?= @$cuti->telepon_cuti ?>" />
                   <i class="form-group__bar"></i>
                 </div>
             </div>
@@ -110,7 +112,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-success btn--icon-text cuti-action-save">
-          <i class="zmdi zmdi-save"></i> Ajukan Cuti
+          <i class="zmdi zmdi-save"></i> Simpan
         </button>
         <button type="button" class="btn btn-light btn--icon-text cuti-action-cancel" data-dismiss="modal">
           Batal

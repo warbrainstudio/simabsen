@@ -53,7 +53,7 @@
                     </div>
                     <div class="col-xs-12 col-sm-6">
                         <div class="form-group">
-                            <label>No. Telepon</label>
+                            <label>No. Telepon saat cuti</label>
                             <div class="form-control"><?= @$cuti->telepon_cuti ?>&nbsp;</div>
                         </div>
                     </div>
@@ -65,25 +65,32 @@
                         </div>
                 </div>
                 <div class="row">
+                <?php if($role='Administrator') : ?>
                     <div class="col-xs-12 col-sm-4">
                         <div class="form-group">
                             <label>Persetujuan Pertama</label>
-                            <div class="form-control"><?= (@$cuti->persetujuan_pertama == '') ? 'Menunggu persetujuan' : @$cuti->persetujuan_pertama ?>&nbsp;</div>
+                            <div class="form-control"><?= (@$cuti->persetujuan_pertama == '') ? '-' : @$cuti->persetujuan_pertama ?>&nbsp;</div>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-4">
                         <div class="form-group">
                             <label>Persetujuan Kedua</label>
-                            <div class="form-control"><?= (@$cuti->persetujuan_kedua == '') ? 'Menunggu persetujuan' : @$cuti->persetujuan_kedua ?>&nbsp;</div>
+                            <div class="form-control"><?= (@$cuti->persetujuan_kedua == '') ? '-' : @$cuti->persetujuan_kedua ?>&nbsp;</div>
                         </div>
                     </div>
                     <div class="col-xs-12 col-sm-4">
                         <div class="form-group">
                             <label>Persetujuan Ketiga</label>
-                            <div class="form-control"><?= (@$cuti->persetujuan_ketiga == '') ? 'Menunggu persetujuan' : @$cuti->persetujuan_ketiga ?>&nbsp;</div>
+                            <div class="form-control"><?= (@$cuti->persetujuan_ketiga == '') ? '-' : @$cuti->persetujuan_ketiga ?>&nbsp;</div>
                         </div>
                     </div>
                 </div>
+                <?php else : ?>
+                    <div class="form-group">
+                        <label>Status Persetujuan</label>
+                        <div class="form-control"><?= (@$cuti->status_persetujuan == '') ? '-' : @$cuti->status_persetujuan ?>&nbsp;</div>
+                    </div>
+                <?php endif ?>
                 <div class="row">
                         <div class="form-group">
                             <label>Status Persetujuan</label>
@@ -92,12 +99,12 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <?php if (@$cuti->status_persetujuan != '') : ?>
-                    <button type="button" class="btn btn-warning btn--icon-text skspk-action-download">
+                <?php if (@$cuti->status_persetujuan != '' && @$cuti->status_persetujuan !== 'Ditolak' && @$cuti->status_persetujuan !== 'Dipertimbangkan') : ?>
+                    <button type="button" class="btn btn-warning btn--icon-text cuti-action-download">
                         <i class="zmdi zmdi-download"></i> Cetak Form Cuti
                     </button>
                 <?php endif ?>
-                    <button type="button" class="btn btn-light btn--icon-text skspk-action-cancel" data-dismiss="modal">
+                    <button type="button" class="btn btn-light btn--icon-text cuti-action-cancel" data-dismiss="modal">
                         Tutup
                     </button>
             </div>

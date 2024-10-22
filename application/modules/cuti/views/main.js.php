@@ -12,25 +12,11 @@
     var _is_first_load = (_key != null && _key != "") ? true : false;
     var _pegawai_id = "<?= @$pegawai_id ?>";
     var _pegawai_namaLengkap = "<?= @$pegawai_nama_lengkap ?>";
-    var _pengajuan_cuti = document.querySelector("."+_section+"-pengajuan-cuti");
-    var _keterangan_cuti = document.querySelector("."+_section+"-keterangan-cuti");
-    var ijin = $("#" + _modal + " ." + _section + "-jenis_cuti-4");
-    var lain = $("#" + _modal + " ." + _section + "-jenis_cuti-5");
-    var _action = "<?= @$action ?>";
-
-    if(_action=='New'){
-      _pengajuan_cuti.style.display = 'none';
-      _keterangan_cuti.style.display = 'none';
-    }
-    if(ijin.prop('checked') || lain.prop('checked')){
-      _keterangan_cuti.style.display = 'block';
-    }else{
-      _keterangan_cuti.style.display = 'none';
-    }
     
     // Init on load
     initSelect2_enter(".cuti-absen_pegawai_id", "Cari dengan ID Absen / Nama Lengkap...", "<?= base_url('ref/ajax_search_pegawai') ?>", formatSelect2Result_pegawai);
     load_select2DefaultValue();
+    hideForm();
 
     if (_is_load_partial === '0' && $(`#${_table}`)[0]) {
       if ($.fn.DataTable.isDataTable(`#${_table}`) === false) {
@@ -99,7 +85,7 @@
                     status = '<i class="zmdi zmdi-check"></i>';
                     verifiedColor = 'success';
                   }
-                  return `<a class="status_single_detail1"><span class="badge badge-${verifiedColor}">${status}</span></a>`;
+                  return `<span class="badge badge-${verifiedColor}">${status}</span>`;
                 }
               },
               {
@@ -117,7 +103,7 @@
                     status = '<i class="zmdi zmdi-check"></i>';
                     verifiedColor = 'success';
                   }
-                  return `<a class="status_single_detail2"><span class="badge badge-${verifiedColor}">${status}</span></a>`;
+                  return `<span class="badge badge-${verifiedColor}">${status}</span>`;
                 }
               },
               {
@@ -135,35 +121,44 @@
                     status = '<i class="zmdi zmdi-check"></i>';
                     verifiedColor = 'success';
                   }
-                  return `<a class="status_single_detail3"><span class="badge badge-${verifiedColor}">${status}</span></a>`;
+                  return `<span class="badge badge-${verifiedColor}">${status}</span>`;
                 }
               },
               {
                 data: "status_persetujuan",
                 render: function(data, type, row, meta) {
-                  var status = (data === null) ? 'Menunggu persetujuan' : data;
-                  var verifiedColor = (data === null) ? 'warning' : 'success';
-                  return `<a class="status_detail"><span class="badge badge-${verifiedColor}">${status}</span></a>`;
+                  let status;
+                  let verifiedColor;
+                  if (data === null) {
+                    status = 'Menunggu persetujuan';
+                    verifiedColor = 'secondary'; // Use 'secondary' for null status
+                  } else if (data === 'Ditolak') {
+                    status = data;
+                    verifiedColor = 'danger';
+                  } else if (data === 'Dipertimbangkan') {
+                    status = data;
+                    verifiedColor = 'warning';
+                  } else {
+                    status = 'Disetujui';
+                    verifiedColor = 'success';
+                  }
+                  return `<span class="badge badge-${verifiedColor}">${status}</span>`;
                 }
               },
             {
               data: null,
               render: function(data, type, row, meta) {
+
                 var _jumlah_persetujuan = row.persetujuan_ketiga;
-                if(_jumlah_persetujuan !== null){
-                  return `
-                      <div class="action" style="display: flex; flex-direction: row;">
-                          <a href="javascript:;" class="btn btn-sm btn-danger action-delete" title="Hapus"><i class="zmdi zmdi-delete"></i> Hapus</a>
-                      </div>
-                  `;
+                var detail = `<a href="<?= base_url('cuti/detail?ref=') ?>${row.id}" modal-id="${_modal_view}" class="btn btn-sm btn-success x-load-modal-partial" title="Rincian"><i class="zmdi zmdi-eye"></i></a>&nbsp;`;
+                var del = `<a href="<?= base_url('cuti/delete?ref=') ?>${row.id}" class="btn btn-sm btn-danger action-delete" title="Hapus"><i class="zmdi zmdi-delete"></i> Hapus</a>`;
+                var aprove = `<a href="javascript:;" class="btn btn-sm btn-primary action-aprove" title="Aprove"><i class="zmdi zmdi-check"></i></a>&nbsp;`;
+                var input = `<a href="<?= base_url('cuti/input?ref=') ?>${row.id}" modal-id="modal-form-cuti" class="btn btn-sm btn-light x-load-modal-partial" title="Ubah"><i class="zmdi zmdi-edit"></i> Ubah</a>&nbsp;`;       
+                
+                if(_jumlah_persetujuan !== null || row.status_persetujuan=='Ditolak'){
+                  return `<div class="action" style="display: flex; flex-direction: row;">${detail} ${del}</div>`;
                 }else{
-                  return `
-                      <div class="action" style="display: flex; flex-direction: row;">
-                        <a href="<?= base_url('cuti/detail?ref=') ?>${row.id}" modal-id="${_modal_view}" class="btn btn-sm btn-success x-load-modal-partial" title="Rincian"><i class="zmdi zmdi-eye"></i></a>&nbsp;
-                        <a href="<?= base_url('cuti/input?ref=') ?>${row.id}" modal-id="modal-form-cuti" class="btn btn-sm btn-light x-load-modal-partial" title="Ubah"><i class="zmdi zmdi-edit"></i> Ubah</a>&nbsp;
-                        <a href="<?= base_url('cuti/delete?ref=') ?>${row.id}" class="btn btn-sm btn-danger action-delete" title="Hapus"><i class="zmdi zmdi-delete"></i> Hapus</a>
-                      </div>
-                  `;
+                  return `<div class="action" style="display: flex; flex-direction: row;">${aprove} ${detail} ${input} ${del}</div>`;
                 }
               }
             }
@@ -245,22 +240,34 @@
       };
     };
 
-    $("#" + _section).on("click", "button." + _section + "-add", function(e) {
+    $(document).on("click", `#${_modal_view} .cuti-persetujuan`, function(e) {
       e.preventDefault();
-      resetForm();
-      
-    });
-
-    $("#" + _table).on("click", "a.action-edit", function(e) {
-      e.preventDefault();
-      resetForm();
-      var temp = table.row($(this).closest('tr')).data();
-
-      // Set key for update params, important!
-      _key = temp.id;
-
-      $.each(temp, function(key, item) {
-        $(`#${_form} .${_section}-${key}`).val(item).trigger("input").trigger("change");
+      swal.fire({
+        title: "Beri persetujuan cuti "+_key+"?",
+        text: "",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Setuju",
+        cancelButtonText: "Tolak",
+        closeOnConfirm: false
+      }).then((result) => {
+        if (result.value) {
+          $.ajax({
+            type: "post",
+            url: "<?php echo base_url('cuti/ajax_approve/') ?>" + _key,
+            data: { statuspersetujuan: 'Disetujui' },
+            dataType: "json",
+            success: function(response) {
+              if (response.status) {
+                $("#" + _modal_view).modal("hide");
+                table.ajax.reload(null, false);
+                notify(response.data, "success");
+              } else {
+                notify(response.data, "danger");
+              };
+            }
+          });
+        };
       });
     });
 
@@ -424,11 +431,26 @@
               };
             }
           });
+        }else{
+          $.ajax({
+            type: "post",
+            url: "<?php echo base_url('cuti/ajax_approve/') ?>" + temp.id,
+            data: { statuspersetujuan: 'Ditolak' },
+            dataType: "json",
+            success: function(response) {
+              if (response.status) {
+                table.ajax.reload(null, false);
+                notify(response.data, "success");
+              } else {
+                notify(response.data, "danger");
+              };
+            }
+          });
         };
       });
     });
 
-    $("#" + _table).on("click", "a.status_single_detail1", function(e) {
+    /*$("#" + _table).on("click", "a.status_single_detail1", function(e) {
       e.preventDefault();
       var temp = table.row($(this).closest('tr')).data();
       var p = temp.persetujuan_pertama;
@@ -449,87 +471,7 @@
               }
           }
       });
-    });
-
-    $("#" + _table).on("click", "a.status_single_detail2", function(e) {
-      e.preventDefault();
-      var temp = table.row($(this).closest('tr')).data();
-      var p = temp.persetujuan_kedua;
-      if(p===null){
-        p = "menunggu persetujuan";
-      }
-      swal({
-          title: "Status Pengajuan",
-          text: "Pengajuan cuti "+p,
-          icon: "info",
-          buttons: {
-              confirm: {
-                  text: "OK",
-                  value: true,
-                  visible: true,
-                  className: "",
-                  closeModal: true,
-              }
-          }
-      });
-    });
-
-    $("#" + _table).on("click", "a.status_single_detail3", function(e) {
-      e.preventDefault();
-      var temp = table.row($(this).closest('tr')).data();
-      var p = temp.persetujuan_ketiga;
-      if(p===null){
-        p = "menunggu persetujuan";
-      }
-      swal({
-          title: "Status Pengajuan",
-          text: "Pengajuan cuti "+p,
-          icon: "info",
-          buttons: {
-              confirm: {
-                  text: "OK",
-                  value: true,
-                  visible: true,
-                  className: "",
-                  closeModal: true,
-              }
-          }
-      });
-    });
-
-    $("#" + _table).on("click", "a.status_detail", function(e) {
-      e.preventDefault();
-      var temp = table.row($(this).closest('tr')).data();
-      var p1 = temp.persetujuan_pertama;
-      var p2 = temp.persetujuan_kedua;
-      var p3 = temp.persetujuan_ketiga;
-      var p = temp.jumlah_persetujuan;
-      if(p1===null){
-        p1 = "Menunggu proses";
-      }
-      if(p2===null){
-        p2 = "Menunggu proses";
-      }
-      if(p3===null){
-        p3 = "Menunggu proses";
-      }
-      swal({
-          title: "Detail",
-          text: "Persetujuan pertama "+p1
-                +", Persetujuan kedua "+p2
-                +", Persetujuan ketiga "+p3,
-          icon: "info",
-          buttons: {
-              confirm: {
-                  text: "OK",
-                  value: true,
-                  visible: true,
-                  className: "",
-                  closeModal: true,
-              }
-          }
-      });
-    });
+    });*/
 
     $("#" + _table).on("click", "a.action-delete", function(e) {
       e.preventDefault();
@@ -597,6 +539,28 @@
         };
       }, 300);
     };
+
+    function hideForm() {
+      var _pengajuan_cuti = document.querySelector("." + _section + "-pengajuan-cuti");
+      var _keterangan_cuti = document.querySelector("." + _section + "-keterangan-cuti");
+      var ijin = $("#" + _modal + " ." + _section + "-jenis_cuti-4");
+      var lain = $("#" + _modal + " ." + _section + "-jenis_cuti-5");
+      var _action = "<?= @$action ?>";
+
+      if (!_pengajuan_cuti || !_keterangan_cuti) {
+          return;
+      }
+
+      if (_action == 'New') {
+          _pengajuan_cuti.style.display = 'none';
+          _keterangan_cuti.style.display = 'none';
+      }
+      if (ijin.prop('checked') || lain.prop('checked')) {
+          _keterangan_cuti.style.display = 'block';
+      } else {
+          _keterangan_cuti.style.display = 'none';
+      }
+    }
 
   });
 </script>

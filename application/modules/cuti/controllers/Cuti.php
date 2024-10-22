@@ -95,6 +95,7 @@ class Cuti extends AppBackend
       'app' => $this->app(),
       'main_js' => $this->load_main_js('cuti', false, array(
         'key' => $ref,
+        'is_load_partial' => 1,
       )),
       'card_title' => $actionLabel . $this->_pageTitle,
       'controller' => $this,

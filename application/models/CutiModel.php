@@ -80,7 +80,7 @@ class CutiModel extends CI_Model
       $this->akhir_cuti = $this->input->post('akhircuti');
       $this->tanggal_bekerja = $this->input->post('tanggalbekerja');
       $this->alamat_cuti = $this->input->post('alamatCuti');
-      $this->telepon_cuti = $this->input->post('handphoneCuti');
+      $this->telepon_cuti = $this->input->post('teleponCuti');
       $this->jumlah_persetujuan = $this->input->post('jumlahpersetujuan');
       $this->status_persetujuan = $this->input->post('statuspersetujuan');
       $this->created_by = $this->session->userdata('user')['id'];
@@ -91,7 +91,7 @@ class CutiModel extends CI_Model
       $response = array('status' => false, 'data' => 'Failed to save your data.');
     };
 
-    $awalCuti = $this->input->post('awalcuti');
+    /*$awalCuti = $this->input->post('awalcuti');
     $akhirCuti = $this->input->post('akhircuti');
     $awalTimestamp = strtotime($awalCuti);
     $akhirTimestamp = strtotime($akhirCuti);
@@ -113,7 +113,7 @@ class CutiModel extends CI_Model
         }
     } else {
       $response = array('status' => false, 'data' => 'Invalid Date Range');
-    }
+    }*/
 
 
     return $response;
@@ -186,8 +186,8 @@ class CutiModel extends CI_Model
       $this->awal_cuti = $this->input->post('awalcuti');
       $this->akhir_cuti = $this->input->post('akhircuti');
       $this->tanggal_bekerja = $this->input->post('tanggalbekerja');
-      $this->alamat_cuti = $this->input->post('alamatcuti');
-      $this->telepon_cuti = $this->input->post('teleponcuti');
+      $this->alamat_cuti = $this->input->post('alamatCuti');
+      $this->telepon_cuti = $this->input->post('teleponCuti');
       $this->updated_by = $this->session->userdata('user')['id'];
       $this->updated_date = date('Y-m-d H:i:s');
       $this->db->update($this->_table, $this, array('id' => $id));
@@ -215,24 +215,36 @@ class CutiModel extends CI_Model
           if (!$query) {
               return array('status' => false, 'data' => 'No data found for the specified ID.');
           }
-  
-          // Check the current approval statuses
-          $p  = (int) $query->jumlah_persetujuan; // Cast to integer for comparison
+
+          $p  = (int) $query->jumlah_persetujuan;
           $p1 = $query->persetujuan_pertama;
           $p2 = $query->persetujuan_kedua;
           $p3 = $query->persetujuan_ketiga;
-  
-          // Prepare the new status
-          $newStatus = $this->input->post('statuspersetujuan') . " " . $this->session->userdata('user')['role'];
+          $status = $this->input->post('statuspersetujuan');
+          $newStatus = $status . " " . $this->session->userdata('user')['role'];
   
           if ($p > 2) {
               if ($p1 === null) {
-                  $this->persetujuan_pertama = $newStatus;
+                  if($status == 'Ditolak'){
+                    $this->persetujuan_pertama = $status;
+                    $this->status_persetujuan = $status;
+                  }else{
+                    $this->persetujuan_pertama = $newStatus;
+                  }
               } elseif ($p1 !== null && $p2 === null) {
-                  $this->persetujuan_kedua = $newStatus;
+                  if($status == 'Ditolak'){
+                    $this->persetujuan_kedua = $status;
+                    $this->status_persetujuan = $status;
+                  }else{
+                    $this->persetujuan_kedua = $newStatus;
+                  }
               } elseif ($p2 !== null && $p3 === null) {
-                  $this->persetujuan_ketiga = $newStatus;
-                  $this->status_persetujuan = $newStatus;
+                  if($status == 'Ditolak'){
+                    $this->persetujuan_ketiga = $status;
+                    $this->status_persetujuan = 'Dipertimbangkan';
+                  }else{
+                    $this->persetujuan_ketiga = $newStatus;
+                  }
               }
           } else {
               if ($p1 === null) {
