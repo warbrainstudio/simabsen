@@ -1,8 +1,8 @@
-<table id="table-absen-harian" class="table table-bordered">
+<table id="table-absen-periode" class="table table-bordered">
     <thead class="thead-default">
         <tr>
             <th width="100">No</th>
-            <th>ID Finger</th>
+            <th>ID Absen</th>
             <th>Nama Pegawai</th>
             <th>Departemen</th>
             <th>Nomor PIN</th>

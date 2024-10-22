@@ -1,4 +1,4 @@
-<div class="modal fade" id="modal-form-tarikdata-harian" data-backdrop="static" data-keyboard="false">
+<div class="modal fade" id="modal-form-tarikdata-periode" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -8,7 +8,7 @@
                 <div class="lds-hourglass"></div>
             </div>
             <div class="modal-body">
-                <form id="form-tarikdata-harian">
+                <form id="form-tarikdata-periode">
                     <!-- CSRF -->
                     <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>" />
 

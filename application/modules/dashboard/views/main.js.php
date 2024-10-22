@@ -1,17 +1,13 @@
 <script type="text/javascript">
   $(document).ready(function() {
 
-    var _key = "";
+    var _key = "<?= $key ?>";
     var _section = "dashboard";
-    var _form = "form-tarikdata-harian";
-    var _modal = "modal-form-tarikdata-harian";
-    var _table = "table-absen-harian";
+    var _form = "form-tarikdata-periode";
+    var _modal = "modal-form-tarikdata-periode";
+    var _table = "table-absen-periode";
     const calendar = ".calendar";
     const days = document.querySelectorAll(calendar + ' .day');
-
-    $("#" + _section).on("click", "button." + _section + "-backButton", function(e) {
-        window.history.back();
-    });
 
     if ($("#" + _table)[0]) {
       var daily = "<?= $isDaily ?>";
@@ -171,6 +167,23 @@
         });
     });
 
+    $("#" + _section).on("click", "button." + _section + "-export", function(e) {
+      swal({
+        title: "Download Data",
+        text: "Unduh data absen tanggal "+_key+" ?",
+        type: "info",
+        showCancelButton: true,
+        confirmButtonText: "Ya",
+        cancelButtonText: "Tidak",
+        closeOnConfirm: false
+      }).then((result) => {
+          if (result.value) {
+            var downloadUrl = "<?= base_url('absen/excel?ref=cxsmi&date=') ?>" + _key;
+            window.location.href = downloadUrl;
+          }
+      });
+    });
+
     $(`${calendar} .header_month .month_name .month_content`).on("click", function(e) {
         const currentUrl = window.location.pathname;
         const regex = /(\d{4})\/(\d{2})$/;
@@ -187,8 +200,8 @@
             date = `${year}-${month}`;
         }
 
-        var downloadUrl = "<?php echo base_url('dashboard/detail?date=') ?>" + date;
-        window.location.href = downloadUrl;
+        var detailUrl = "<?php echo base_url('dashboard/detail?date=') ?>" + date;
+        window.location.href = detailUrl;
     });
 
 
@@ -240,7 +253,7 @@
                     }
                 }
             }).then((result) => {
-              fetchData(tanggal, _key);
+              fetchData(tanggal);
             });
         }
     });
@@ -320,7 +333,7 @@
         const startTime = performance.now();
         $.ajax({
             type: "get",
-            url: "<?php echo site_url('tarikdata/ajax_fetch_data'); ?>" + _key,
+            url: "<?php echo site_url('tarikdata/ajax_fetch_data'); ?>",
             data: $("#" + _form).serialize(),
             dataType: "json", // Expect JSON response
             success: function(parsedResponse) {
@@ -446,6 +459,9 @@
         });
     }
 
+    $("#" + _section).on("click", "button." + _section + "-backButton", function(e) {
+        window.history.back();
+    });
 
     resetForm = () => {
       _key = "";

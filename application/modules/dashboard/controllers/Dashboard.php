@@ -94,12 +94,12 @@ class Dashboard extends AppBackend
 	public function detail()
   	{
 		//$agent = new Mobile_Detect;
-		$date = $this->input->get('date');
+		$ref = $this->input->get('date');
 		$searchFilter = "";
 		$status = "";
 		$card = "";
-		if (DateTime::createFromFormat('Y-m-d', $date) !== false) {
-			$dateTime = DateTime::createFromFormat('Y-m-d', $date);
+		if (DateTime::createFromFormat('Y-m-d', $ref) !== false) {
+			$dateTime = DateTime::createFromFormat('Y-m-d', $ref);
 			$Day = $dateTime->format('D');
             $DayNumber = $dateTime->format('d');
             $monthNumber = $dateTime->format('m');
@@ -107,11 +107,11 @@ class Dashboard extends AppBackend
             $formattedDay = $this->get_day($Day);
             $formattedMonth = $this->get_month($monthNumber);
             $formattedDate = $formattedDay.', '.$DayNumber.' '.$formattedMonth . ' ' . $year;
-			$searchFilter = "AND tanggal_absen::date='$date'";
+			$searchFilter = "AND tanggal_absen::date='$ref'";
 			$status = 'true';
 			$card = "hari ".$formattedDate;
-		}else if(DateTime::createFromFormat('Y-m', $date) !== false){
-			$dateTime = DateTime::createFromFormat('Y-m', $date);
+		}else if(DateTime::createFromFormat('Y-m', $ref) !== false){
+			$dateTime = DateTime::createFromFormat('Y-m', $ref);
 			$monthNumber = $dateTime->format('m');
 			$year = $dateTime->format('Y');
 			$formattedMonth = $this->get_month($monthNumber);
@@ -128,15 +128,13 @@ class Dashboard extends AppBackend
 			'app' => $this->app(),
 			'main_js' => $this->load_main_js('dashboard', false, array(
 				'action_route' => 'detail',
-				'key' => $date,
-				'tanggal' => $date,
+				'key' => $ref,
 				'searchFilter' => $searchFilter,
 				'isDaily' => $status,
 			)),
 			'card_title' => 'Data absen '.$card,
 			'controller' => $this,
 			//'is_mobile' => $agent->isMobile(),
-			'tglabsen' => $date,
 			'isDaily' => $status,
 			'isAll' => 'false',
 			'list_mesin' => $this->init_list($this->MesinModel->getAll(), 'ipadress','namamesin','status'),

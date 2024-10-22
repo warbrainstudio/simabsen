@@ -13,7 +13,7 @@
                                 <i class="zmdi zmdi-cloud-download"></i> Update Data Absen
                             </button>
                             <?php endif ?>
-                            <button class="btn btn-sm btn-success" onclick="window.location.href='<?= base_url('attendancelog/excel?ref=cxsmi&date='.$tglabsen) ?>'">
+                            <button class="btn btn-sm btn-success dashboard-export">
                             <i class="zmdi zmdi-download"></i> Download Data (Excel)
                             </button>
                             <button class="btn btn-sm btn-dark dashboard-backButton">
@@ -23,9 +23,9 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane active fade show" id="tab-attendancelog_harian" role="tabpanel">
+            <div class="tab-pane active fade show" id="tab-absen_periode" role="tabpanel">
                 <div class="pt-4">
-                    <?php require_once(APPPATH . 'modules/dashboard/views/attendancelog_harian.php') ?>
+                    <?php require_once(APPPATH . 'modules/dashboard/views/absen_periode.php') ?>
                 </div>
             </div>
         </div>

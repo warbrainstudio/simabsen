@@ -33,7 +33,7 @@
                     <thead class="thead-default">
                         <tr>
                             <th width="100">No</th>
-                            <th>ID Finger</th>
+                            <th>ID Absen</th>
                             <th>Nama Pegawai</th>
                             <th>Departemen</th>
                             <th>Nomor PIN</th>

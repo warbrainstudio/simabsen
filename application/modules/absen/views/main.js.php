@@ -78,9 +78,9 @@
               data: "absen_id",
               render: function(data, type, row, meta) {
                 if(row.nama=='-'){
-                  return `<a href="<?= base_url('pegawai/detailnull?ref=') ?>${row.absen_id}">${data}</a>`;
+                  return `<a href="<?= base_url('pegawai/detailnull?ref=') ?>${row.absen_id}" modal-id="modal-view-pegawai" class="x-load-modal-partial">${data}</a>`;
                 }else{
-                  return `<a href="<?= base_url('pegawai/detail?ref=') ?>${row.absen_id}">${data}</a>`;
+                  return `<a href="<?= base_url('pegawai/detail?ref=') ?>${row.absen_id}" modal-id="modal-view-pegawai" class="x-load-modal-partial">${data}</a>`;
                 }
               }
             },
