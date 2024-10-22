@@ -2,16 +2,27 @@
   $(document).ready(function() {
 
     var _key = "<?= $key ?>";
+    var _role = "<?= $this->session->userdata('user')['role'] ?>";
     var _section = "cuti";
     var _table = "table-cuti";
     var _modal = "modal-form-cuti";
     var _form = "form-cuti";
+    var _form_persetujuan = "form-persetujuan";
     var _modal_view = "modal-view-cuti";
     var _p_search = "<?= (isset($_GET['q'])) ? $_GET['q'] : '' ?>";
     var _is_load_partial = "<?= (isset($is_load_partial)) ? $is_load_partial : '0' ?>";
     var _is_first_load = (_key != null && _key != "") ? true : false;
     var _pegawai_id = "<?= @$pegawai_id ?>";
     var _pegawai_namaLengkap = "<?= @$pegawai_nama_lengkap ?>";
+    var array_admin = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    var non_admin = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    var arrayColumn = [];
+
+    if (_role === 'Administrator') {
+        arrayColumn = array_admin;
+    } else {
+        arrayColumn = non_admin;
+    }
     
     // Init on load
     initSelect2_enter(".cuti-absen_pegawai_id", "Cari dengan ID Absen / Nama Lengkap...", "<?= base_url('ref/ajax_search_pegawai') ?>", formatSelect2Result_pegawai);
@@ -40,14 +51,14 @@
                 }
               },
               {
-                data: "absen_pegawai_id"/*,
-              render: function(data, type, row, meta) {
-                if(row.nama=='-'){
-                  return `<a href=" ${row.absen_pegawai_id}">${data}</a>`;
-                }else{
-                  return `<a href=" ${row.absen_pegawai_id}">${data}</a>`;
+                data: "absen_pegawai_id",
+                render: function(data, type, row, meta) {
+                  if(row.nama=='-'){
+                    return `<a href="<?= base_url('pegawai/detailnull?ref=') ?>${row.absen_pegawai_id}" modal-id="modal-view-pegawai" class="x-load-modal-partial">${data}</a>`;
+                  }else{
+                    return `<a href="<?= base_url('pegawai/detail?ref=') ?>${row.absen_pegawai_id}" modal-id="modal-view-pegawai" class="x-load-modal-partial">${data}</a>`;
+                  }
                 }
-              }*/
               },
               {
                 data: "jenis_cuti"
@@ -73,56 +84,62 @@
               {
                 data: "persetujuan_pertama",
                 render: function(data, type, row, meta) {
-                  let status;
-                  let verifiedColor;
-                  if (data === null) {
-                    status = '-';
-                    verifiedColor = 'secondary'; // Use 'secondary' for null status
-                  } else if (data === 'Ditolak') {
-                    status = 'x';
-                    verifiedColor = 'danger';
-                  } else {
-                    status = '<i class="zmdi zmdi-check"></i>';
-                    verifiedColor = 'success';
+                  
+                    let status;
+                    let verifiedColor;
+                    if (data === null) {
+                      status = '-';
+                      verifiedColor = 'secondary';
+                    } else if (data === 'Ditolak') {
+                      status = 'x';
+                      verifiedColor = 'danger';
+                    } else {
+                      status = '<i class="zmdi zmdi-check"></i>';
+                      verifiedColor = 'success';
+                    }
+                    return `<span class="badge badge-${verifiedColor}">${status}</span>`;
                   }
-                  return `<span class="badge badge-${verifiedColor}">${status}</span>`;
-                }
+                
               },
               {
                 data: "persetujuan_kedua",
                 render: function(data, type, row, meta) {
-                  let status;
-                  let verifiedColor;
-                  if (data === null) {
-                    status = '-';
-                    verifiedColor = 'secondary'; // Use 'secondary' for null status
-                  } else if (data === 'Ditolak') {
-                    status = 'x';
-                    verifiedColor = 'danger';
-                  } else {
-                    status = '<i class="zmdi zmdi-check"></i>';
-                    verifiedColor = 'success';
+                  
+                    let status;
+                    let verifiedColor;
+                    if (data === null) {
+                      status = '-';
+                      verifiedColor = 'secondary';
+                    } else if (data === 'Ditolak') {
+                      status = 'x';
+                      verifiedColor = 'danger';
+                    } else {
+                      status = '<i class="zmdi zmdi-check"></i>';
+                      verifiedColor = 'success';
+                    }
+                    return `<span class="badge badge-${verifiedColor}">${status}</span>`;
                   }
-                  return `<span class="badge badge-${verifiedColor}">${status}</span>`;
-                }
+                
               },
               {
                 data: "persetujuan_ketiga",
                 render: function(data, type, row, meta) {
-                  let status;
-                  let verifiedColor;
-                  if (data === null) {
-                    status = '-';
-                    verifiedColor = 'secondary'; // Use 'secondary' for null status
-                  } else if (data === 'Ditolak') {
-                    status = 'x';
-                    verifiedColor = 'danger';
-                  } else {
-                    status = '<i class="zmdi zmdi-check"></i>';
-                    verifiedColor = 'success';
+                  
+                    let status;
+                    let verifiedColor;
+                    if (data === null) {
+                      status = '-';
+                      verifiedColor = 'secondary';
+                    } else if (data === 'Ditolak') {
+                      status = 'x';
+                      verifiedColor = 'danger';
+                    } else {
+                      status = '<i class="zmdi zmdi-check"></i>';
+                      verifiedColor = 'success';
+                    }
+                    return `<span class="badge badge-${verifiedColor}">${status}</span>`;
                   }
-                  return `<span class="badge badge-${verifiedColor}">${status}</span>`;
-                }
+                
               },
               {
                 data: "status_persetujuan",
@@ -154,11 +171,18 @@
                 var del = `<a href="<?= base_url('cuti/delete?ref=') ?>${row.id}" class="btn btn-sm btn-danger action-delete" title="Hapus"><i class="zmdi zmdi-delete"></i> Hapus</a>`;
                 var aprove = `<a href="javascript:;" class="btn btn-sm btn-primary action-aprove" title="Aprove"><i class="zmdi zmdi-check"></i></a>&nbsp;`;
                 var input = `<a href="<?= base_url('cuti/input?ref=') ?>${row.id}" modal-id="modal-form-cuti" class="btn btn-sm btn-light x-load-modal-partial" title="Ubah"><i class="zmdi zmdi-edit"></i> Ubah</a>&nbsp;`;       
-                
-                if(_jumlah_persetujuan !== null || row.status_persetujuan=='Ditolak'){
-                  return `<div class="action" style="display: flex; flex-direction: row;">${detail} ${del}</div>`;
-                }else{
-                  return `<div class="action" style="display: flex; flex-direction: row;">${aprove} ${detail} ${input} ${del}</div>`;
+                if (_role === 'Administrator') {
+                  if(_jumlah_persetujuan !== null || row.status_persetujuan=='Ditolak'){
+                    return `<div class="action" style="display: flex; flex-direction: row;">${detail} ${del}</div>`;
+                  }else{
+                    return `<div class="action" style="display: flex; flex-direction: row;">${aprove} ${detail} ${input} ${del}</div>`;
+                  }
+                } else {
+                  if(row.persetujuan_pertama!==null){
+                    return `<div class="action" style="display: flex; flex-direction: row;">${detail} ${del}</div>`;
+                  }else{
+                    return `<div class="action" style="display: flex; flex-direction: row;">${detail} ${input} ${del}</div>`;
+                  }
                 }
               }
             }
@@ -240,36 +264,46 @@
       };
     };
 
-    $(document).on("click", `#${_modal_view} .cuti-persetujuan`, function(e) {
-      e.preventDefault();
-      swal.fire({
-        title: "Beri persetujuan cuti "+_key+"?",
-        text: "",
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Setuju",
-        cancelButtonText: "Tolak",
-        closeOnConfirm: false
-      }).then((result) => {
-        if (result.value) {
-          $.ajax({
-            type: "post",
-            url: "<?php echo base_url('cuti/ajax_approve/') ?>" + _key,
-            data: { statuspersetujuan: 'Disetujui' },
-            dataType: "json",
-            success: function(response) {
-              if (response.status) {
-                $("#" + _modal_view).modal("hide");
-                table.ajax.reload(null, false);
-                notify(response.data, "success");
-              } else {
-                notify(response.data, "danger");
-              };
-            }
-          });
-        };
-      });
-    });
+    $(document).on("click", `#${_modal_view} .cuti-action-setuju`, function(e) {
+            e.preventDefault();
+            var formData = new FormData($(`#${_form_persetujuan}`)[0]);
+            var ref = formData.get('ref');
+            formData.append('persetujuan', 'Disetujui');
+            if (table) {
+                swal({
+                    title: "Anda akan menyetujui cuti "+ref+", lanjutkan?",
+                    text: "Sebelum disimpan, pastikan data sudah benar.",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: '#DD6B55',
+                    confirmButtonText: "Ya",
+                    cancelButtonText: "Tidak",
+                    closeOnConfirm: false
+                }).then((result) => {
+                    if (result.value) {
+                        $.ajax({
+                            type: "post",
+                            url: "<?php echo base_url('cuti/ajax_approve/') ?>",
+                            data: formData,
+                            dataType: "json",
+                            enctype: "multipart/form-data",
+                            processData: false,
+                            contentType: false,
+                            cache: false,
+                            success: function(response) {
+                                if (response.status === true) {
+                                    $(`#${_modal_view}`).modal("hide");
+                                    table.ajax.reload(null, false);
+                                    notify(response.data, "success");
+                                } else {
+                                    notify(response.data, "danger");
+                                };
+                            }
+                        });
+                    };
+                });
+            };
+        });
 
     $("#" + _modal + " ." + _section + "-jenis_cuti-0").on("change", function(e) {
       var _pegawai = document.querySelector("."+_section+"-absen_pegawai_id");

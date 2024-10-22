@@ -30,7 +30,6 @@ class Cuti extends AppBackend
     $data = array(
       'app' => $this->app(),
       'main_js' => $this->load_main_js('cuti'),
-      'role' => $role,
       'controller' => $this,
       'is_mobile' => $agent->isMobile(),
       'card_title' => 'Data Cuti',
@@ -137,8 +136,9 @@ class Cuti extends AppBackend
     echo json_encode($this->CutiModel->delete($id));
   }
 
-  public function ajax_approve($id)
+  public function ajax_approve()
   {
+    $id = $this->input->post('ref');
     $this->handle_ajax_request();
     echo json_encode($this->CutiModel->approve($id));
   }

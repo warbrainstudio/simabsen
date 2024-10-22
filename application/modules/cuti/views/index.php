@@ -23,13 +23,13 @@
                             <th>DIMULAI</th>
                             <th>BERAKHIR</th>
                             <th>BEKERJA</th>
-                            <?php if($role='Administrator') : ?>
+                            <?php //if ($this->session->userdata('user')['role'] === 'Administrator') : ?>
                             <th>P1</th>
                             <th>P2</th>
                             <th>P3</th>
-                            <?php else : ?>
-                            <th>PERSETUJUAN</th>
-                            <?php endif ?>
+                            <?php //else : ?>
+                            <!--<th>PERSETUJUAN</th>-->
+                            <?php //endif ?>
                             <th>STATUS</th>
                             <th width="170" class="text-center">#</th>
                         </tr>

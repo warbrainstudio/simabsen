@@ -26,7 +26,7 @@
                 </div>
                 <div class="row">
                         <div class="form-group">
-                            <label>Keterangan</label>
+                            <label>Alasan cuti</label>
                             <div class="form-control"><?= @$cuti->jenis_cuti ?>&nbsp;</div>
                         </div>
                 </div>
@@ -65,7 +65,7 @@
                         </div>
                 </div>
                 <div class="row">
-                <?php if($role='Administrator') : ?>
+                <?php if ($this->session->userdata('user')['role'] === 'Administrator') : ?>
                     <div class="col-xs-12 col-sm-4">
                         <div class="form-group">
                             <label>Persetujuan Pertama</label>
@@ -85,25 +85,46 @@
                         </div>
                     </div>
                 </div>
-                <?php else : ?>
-                    <div class="form-group">
-                        <label>Status Persetujuan</label>
-                        <div class="form-control"><?= (@$cuti->status_persetujuan == '') ? '-' : @$cuti->status_persetujuan ?>&nbsp;</div>
-                    </div>
-                <?php endif ?>
                 <div class="row">
                         <div class="form-group">
                             <label>Status Persetujuan</label>
                             <div class="form-control"><?= (@$cuti->status_persetujuan == '') ? '-Menunggu semua persetujuan-' : @$cuti->status_persetujuan ?>&nbsp;</div>
                         </div>
                 </div>
+                <?php elseif ($this->session->userdata('user')['role'] === 'P1') : ?>
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Status Persetujuan</label>
+                            <div class="form-control"><?= (@$cuti->persetujuan_pertama == '') ? 'Menunggu persetujuan' : @$cuti->persetujuan_pertama ?>&nbsp;</div>
+                        </div>
+                    </div>
+                <?php else : ?>
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Status Persetujuan</label>
+                            <div class="form-control"><?= (@$cuti->status_persetujuan == '') ? 'Menunggu persetujuan' : @$cuti->status_persetujuan ?>&nbsp;</div>
+                        </div>
+                    </div>
+                <?php endif ?>
             </div>
             <div class="modal-footer">
+            <?php if ($this->session->userdata('user')['role'] === 'Administrator') : ?>
                 <?php if (@$cuti->status_persetujuan != '' && @$cuti->status_persetujuan !== 'Ditolak' && @$cuti->status_persetujuan !== 'Dipertimbangkan') : ?>
                     <button type="button" class="btn btn-warning btn--icon-text cuti-action-download">
                         <i class="zmdi zmdi-download"></i> Cetak Form Cuti
                     </button>
                 <?php endif ?>
+            <?php else : ?>
+                <form id="form-persetujuan" autocomplete="off">
+                <input type="hidden" name="ref" value="<?= @$cuti->id ?>" readonly />
+                <input type="hidden" name="persetujuan" />
+                <button type="button" class="btn btn-success btn--icon-text cuti-action-setuju">
+                    <i class="zmdi zmdi-check"></i> Setuju
+                </button>
+                <button type="button" class="btn btn-danger btn--icon-text cuti-action-tolak">
+                    <i class="zmdi zmdi-check"></i> Tolak
+                </button>
+            <?php endif ?>
                     <button type="button" class="btn btn-light btn--icon-text cuti-action-cancel" data-dismiss="modal">
                         Tutup
                     </button>
