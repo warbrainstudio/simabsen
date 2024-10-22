@@ -1,7 +1,7 @@
 <script type="text/javascript">
   $(document).ready(function() {
 
-    var _key = "";
+    var _key = "<?= $key ?>";
     var _section = "pegawai";
     var _section_cuti = "cuti";
     var _table = "table-pegawai";
@@ -9,6 +9,7 @@
     var _table_histori = "table-histori-attendance";
     var _modal = "modal-form-pegawai";
     var _modal_import = "modal-form-import-pegawai";
+    var _modal_view = "modal-view-pegawai";
     var _form = "form-pegawai";
     var _form_import = "form-import-pegawai";
 
@@ -28,7 +29,7 @@
             }
           },
           {
-            data: "absen_pegawai_id",
+            data: "absen_pegawai_id"
           },
           {
             data: "nama_lengkap"
@@ -47,7 +48,7 @@
             render: function(data, type, row, meta) {
               return `
                   <div class="action" style="display: flex; flex-direction: row;">
-                      <a href="<?= base_url('pegawai/detail?ref=') ?>${row.absen_pegawai_id}" class="btn btn-sm btn-success x-load-partial" title="Rincian"><i class="zmdi zmdi-eye"></i> Lihat</a>&nbsp;
+                      <a href="<?= base_url('pegawai/detail?ref=') ?>${row.absen_pegawai_id}" modal-id="${_modal_view}" class="btn btn-sm btn-success x-load-modal-partial" title="Rincian"><i class="zmdi zmdi-eye"></i></a>&nbsp;
                       <a href="javascript:;" class="btn btn-sm btn-light btn-table-action action-edit" data-toggle="modal" data-target="#${_modal}"><i class="zmdi zmdi-edit"></i> Ubah</a>&nbsp;
                       <a href="javascript:;" class="btn btn-sm btn-danger action-delete" title="Hapus"><i class="zmdi zmdi-delete"></i> Hapus</a>
                   </div>
@@ -55,7 +56,7 @@
             }
           }
         ],
-        order: [[1, 'asc']],
+        order: [[2, 'asc']],
         autoWidth: !1,
         responsive: {
           details: {
@@ -225,7 +226,7 @@
             render: function(data, type, row, meta) {
               return `
                   <div class="action" style="display: flex; flex-direction: row;">
-                      <a href="<?= base_url('pegawai/detailnull?ref=') ?>${row.absen_id}" class="btn btn-sm btn-success x-load-partial" title="Rincian"><i class="zmdi zmdi-eye"></i> Lihat</a>&nbsp;
+                      <a href="<?= base_url('pegawai/detailnull?ref=') ?>${row.absen_id}" modal-id="${_modal_view}" class="btn btn-sm btn-success x-load-modal-partial" title="Rincian"><i class="zmdi zmdi-eye"></i></a>&nbsp;
                       <a href="javascript:;" class="btn btn-sm btn-primary btn-table-action action-add-null" data-toggle="modal" data-target="#${_modal}"><i class="zmdi zmdi-plus"></i> Tambah</a>&nbsp;
                       <a href="javascript:;" class="btn btn-sm btn-danger action-delete-null" title="Hapus"><i class="zmdi zmdi-delete"></i> Hapus</a>
                   </div>
@@ -556,8 +557,10 @@
       });
     });
 
-    $("#" + _section).on("click", "button." + _section + "-backButton", function(e) {
-        window.history.back();
+    $("#" + _modal_view + " ." + _section + "-backButton").on("click", function(e) {
+        $("#" + _modal_view).modal("hide");
+        location.reload();
+        //window.history.back();
     });
 
     // Handle form reset

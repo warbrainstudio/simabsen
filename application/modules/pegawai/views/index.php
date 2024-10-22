@@ -21,7 +21,7 @@
                     <thead class="thead-default">
                         <tr>
                             <th width="100">No</th>
-                            <th>ID FINGER</th>
+                            <th>ID ABSEN</th>
                             <th>NAMA</th>
                             <th>DEPARTEMEN</th>
                             <th>PIN</th>
@@ -54,7 +54,7 @@
                     <thead class="thead-default">
                         <tr>
                             <th width="100">No</th>
-                            <th>ID Finger</th>
+                            <th>ID ABSEN</th>
                             <th>Jumlah Absensi</th>
                             <th width="170" class="text-center">#</th>
                         </tr>
