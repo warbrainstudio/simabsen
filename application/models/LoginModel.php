@@ -14,7 +14,7 @@ class LoginModel extends CI_Model
         'rules' => 'required|trim'
       ],
       [
-        'field' => 'password',
+        'field' => 'password',//tes
         'label' => 'Password',
         'rules' => 'required'
       ]
