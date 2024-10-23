@@ -252,7 +252,7 @@ XML;
             
                     if ($dataDateTime >= $startDate && $dataDateTime <= $endDate) {
 
-                        $queryPegawai = $this->db->select('absen_pegawai_id, nama_lengkap')
+                        /*$queryPegawai = $this->db->select('absen_pegawai_id, nama_lengkap')
                                           ->from('pegawai')
                                           ->where('absen_pegawai_id', $PIN)
                                           ->get();
@@ -262,7 +262,7 @@ XML;
                             $namaPegawai = !empty($result['nama_lengkap']) ? $result['nama_lengkap'] : '-';
                         } else {
                             $namaPegawai = '-';
-                        }
+                        }*/
 
                         $queryMesin = $this->db->select('ipadress, namamesin')
                                           ->from('mesin')
@@ -271,12 +271,14 @@ XML;
                         $result = $queryMesin->row_array();
                         $namaMesin = !empty($result['namamesin']) ? $result['namamesin'] : '-';
 
-                        $verifikasi = (htmlspecialchars($Verified) == '1') ? 'Finger' : 'Input';
-                        $status = (htmlspecialchars($Status) == '0') ? 'Masuk' : 'Pulang';
+                        //$verifikasi = (htmlspecialchars($Verified) == '1') ? 'Finger' : 'Input';
+                        //$status = (htmlspecialchars($Status) == '0') ? 'Masuk' : 'Pulang';
+                        $verifikasi = htmlspecialchars($Verified);
+                        $status = htmlspecialchars($Status);
 
                         $filteredData[] = [
                             'PIN' => htmlspecialchars($PIN),
-                            'nama_lengkap' => $namaPegawai,
+                            //'nama_lengkap' => $namaPegawai,
                             'DateTime' => htmlspecialchars($DateTime),
                             'Verified' => $verifikasi,
                             'Status' => $status,
@@ -358,22 +360,22 @@ XML;
                 try {
                     foreach ($data as $row) {
                         $userID = $row['PIN'];
-                        $namaPegawai = $row['nama_lengkap'];
+                        //$namaPegawai = $row['nama_lengkap'];
                         $dateTime = $row['DateTime'];
                         $verified = $row['Verified'];
                         $status = $row['Status'];
                         $machine = $row['Machine'];
                             
                         $this->db->where('absen_id', $userID);
-                        $this->db->where('nama_lengkap', '-');
+                        //$this->db->where('nama_lengkap', '-');
                         $count = $this->db->count_all_results($arrayDB['table']);
                     
-                        if ($count > 0) {
+                        /*if ($count > 0) {
                                 
                             $this->db->where('absen_id', $userID);
                             $this->db->update($arrayDB['table'], ['nama_lengkap' => $namaPegawai]);
                             
-                        } else {
+                        } else {*/
                             
                             $this->db->where('absen_id', $userID);
                             $this->db->where('tanggal_absen', $dateTime);
@@ -383,7 +385,7 @@ XML;
                                 
                                 $data = [
                                     'absen_id' => $userID,
-                                    'nama_lengkap' => $namaPegawai,
+                                    //'nama_lengkap' => $namaPegawai,
                                     'tanggal_absen' => $dateTime,
                                     'verified' => $verified,
                                     'status' => $status,
@@ -399,7 +401,7 @@ XML;
                             } else {
                                 $existingRecordsCount++;
                             }
-                        }
+                        //}
                     }                    
     
                     $this->db->trans_complete();
