@@ -26,7 +26,6 @@ class Cuti extends AppBackend
   public function index()
   {
     $agent = new Mobile_Detect;
-    $role = $this->session->userdata('user')['role'];
     $data = array(
       'app' => $this->app(),
       'main_js' => $this->load_main_js('cuti'),
@@ -84,6 +83,7 @@ class Cuti extends AppBackend
   {
     $this->handle_ajax_request();
 
+    $role = $this->session->userdata('user')['role'];
     $agent = new Mobile_Detect;
     $ref = $this->input->get('ref');
     $ref = (!is_null($ref) && is_numeric($ref)) ? $ref : null;
@@ -101,11 +101,16 @@ class Cuti extends AppBackend
       'is_mobile' => $agent->isMobile(),
       'cuti' => $cuti,
     );
-    $this->load->view('view', $data);
+    if($role=='Administrator'){
+      $this->load->view('view', $data);
+    }else{
+      $this->load->view('view-single', $data);
+    }
   }
 
   public function ajax_get_all()
   {
+    $role = $this->session->userdata('user')['role'];
     $filter = $this->input->get('filter');
     $query = $this->CutiModel->getQuery($filter);
     $response = $this->AppMixModel->getdata_dtAjax($query);

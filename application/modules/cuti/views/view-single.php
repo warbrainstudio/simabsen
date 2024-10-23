@@ -1,4 +1,4 @@
-<div class="modal fade" id="modal-view-cuti" data-backdrop="static" data-keyboard="false">
+<div class="modal fade" id="modal-view-cuti-single" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -65,29 +65,9 @@
                         </div>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12 col-sm-4">
-                        <div class="form-group">
-                            <label>Persetujuan Pertama</label>
-                            <div class="form-control"><?= (@$cuti->persetujuan_pertama == '') ? '-' : @$cuti->persetujuan_pertama ?>&nbsp;</div>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <div class="form-group">
-                            <label>Persetujuan Kedua</label>
-                            <div class="form-control"><?= (@$cuti->persetujuan_kedua == '') ? '-' : @$cuti->persetujuan_kedua ?>&nbsp;</div>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                        <div class="form-group">
-                            <label>Persetujuan Ketiga</label>
-                            <div class="form-control"><?= (@$cuti->persetujuan_ketiga == '') ? '-' : @$cuti->persetujuan_ketiga ?>&nbsp;</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
                         <div class="form-group">
                             <label>Status Persetujuan</label>
-                            <div class="form-control"><?= (@$cuti->status_persetujuan == '') ? '-Menunggu semua persetujuan-' : @$cuti->status_persetujuan ?>&nbsp;</div>
+                            <div class="form-control"><?= (@$cuti->status_persetujuan == '') ? '-Menunggu persetujuan-' : @$cuti->status_persetujuan ?>&nbsp;</div>
                         </div>
                 </div>
             </div>
@@ -97,6 +77,15 @@
                         <i class="zmdi zmdi-download"></i> Cetak Form Cuti
                     </button>
                 <?php endif ?>
+                <form id="form-persetujuan" autocomplete="off">
+                <input type="hidden" name="ref" value="<?= @$cuti->id ?>" readonly />
+                <input type="hidden" name="persetujuan" />
+                <button type="button" class="btn btn-success btn--icon-text cuti-action-setuju">
+                    <i class="zmdi zmdi-check"></i> Setuju
+                </button>
+                <button type="button" class="btn btn-danger btn--icon-text cuti-action-tolak">
+                    <i class="zmdi zmdi-check"></i> Tolak
+                </button>
                 <button type="button" class="btn btn-light btn--icon-text cuti-action-cancel" data-dismiss="modal">
                     Tutup
                 </button>
