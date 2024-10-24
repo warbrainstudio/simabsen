@@ -95,6 +95,7 @@ class ApiAbsen extends CI_Controller {
         $pwd = $this->input->get('password');
         $dbs = $this->input->get('database');
         $table = $this->input->get('table');
+        $table_pegawai = $this->input->get('table_pegawai');
         $IP = $this->input->get('ip');
         $Key = $this->input->get('key');
         $isAll = $this->input->get('alldata') === 'true';
@@ -117,6 +118,7 @@ class ApiAbsen extends CI_Controller {
                 'password' => $pwd,
                 'database' => $dbs,
                 'table' => $table,
+                'table_pegawai' => $table_pegawai, 
                 'ip' => $IP,
                 'key' => $Key,
                 'start_date' => $startDate,
@@ -170,6 +172,7 @@ class ApiAbsen extends CI_Controller {
                 'password' => $arrayInput['password'],
                 'database' => $arrayInput['database'],
                 'table' => $arrayInput['table'],
+                'table_pegawai' => $arrayInput['table_pegawai'],
                 'ip' => $IP,
                 'start_date' => $startDate,
                 'end_date' => $endDate,
@@ -252,7 +255,7 @@ XML;
             
                     if ($dataDateTime >= $startDate && $dataDateTime <= $endDate) {
 
-                        /*$queryPegawai = $this->db->select('absen_pegawai_id, nama_lengkap')
+                        $queryPegawai = $this->db->select('absen_pegawai_id, nama_lengkap')
                                           ->from('pegawai')
                                           ->where('absen_pegawai_id', $PIN)
                                           ->get();
@@ -262,7 +265,7 @@ XML;
                             $namaPegawai = !empty($result['nama_lengkap']) ? $result['nama_lengkap'] : '-';
                         } else {
                             $namaPegawai = '-';
-                        }*/
+                        }
 
                         $queryMesin = $this->db->select('ipadress, namamesin')
                                           ->from('mesin')
@@ -278,7 +281,7 @@ XML;
 
                         $filteredData[] = [
                             'PIN' => htmlspecialchars($PIN),
-                            //'nama_lengkap' => $namaPegawai,
+                            'nama_lengkap' => $namaPegawai,
                             'DateTime' => htmlspecialchars($DateTime),
                             'Verified' => $verifikasi,
                             'Status' => $status,
@@ -360,48 +363,64 @@ XML;
                 try {
                     foreach ($data as $row) {
                         $userID = $row['PIN'];
-                        //$namaPegawai = $row['nama_lengkap'];
+                        $namaPegawai = $row['nama_lengkap'];
                         $dateTime = $row['DateTime'];
                         $verified = $row['Verified'];
                         $status = $row['Status'];
                         $machine = $row['Machine'];
                             
-                        $this->db->where('absen_id', $userID);
-                        //$this->db->where('nama_lengkap', '-');
-                        $count = $this->db->count_all_results($arrayDB['table']);
+                        /*$this->db->where('absen_pegawai_id', $userID);
+                        $this->db->where('nama_lengkap', '-');
+                        $count = $this->db->count_all_results($arrayDB['table_pegawai']);
                     
-                        /*if ($count > 0) {
+                        if ($count > 0) {
                                 
-                            $this->db->where('absen_id', $userID);
-                            $this->db->update($arrayDB['table'], ['nama_lengkap' => $namaPegawai]);
+                            $this->db->where('absen_pegawai_id', $userID);
+                            $this->db->update($arrayDB['table_pegawai'], ['nama_lengkap' => $namaPegawai]);
                             
                         } else {*/
                             
-                            $this->db->where('absen_id', $userID);
-                            $this->db->where('tanggal_absen', $dateTime);
-                            $count = $this->db->count_all_results($arrayDB['table']);
+                        $this->db->like('nama_lengkap', $namaPegawai);
+                        $count = $this->db->count_all_results($arrayDB['table_pegawai']);
                     
-                            if ($count == 0) {
-                                
-                                $data = [
-                                    'absen_id' => $userID,
-                                    //'nama_lengkap' => $namaPegawai,
-                                    'tanggal_absen' => $dateTime,
-                                    'verified' => $verified,
-                                    'status' => $status,
-                                    'ipmesin' => $machine
+                        if ($count > 0) {
+                            // If no records found with partial match, proceed to update
+                            $this->db->like('nama_lengkap', $namaPegawai);
+                            if (!$this->db->update($arrayDB['table_pegawai'], ['absen_pegawai_id' => $userID])) {
+                                $failedInsertions[] = [
+                                    'absen_pegawai_id' => $userID,
+                                    'nama_lengkap' => $namaPegawai,
+                                    'error' => $this->db->error()['message']
                                 ];
-                                if (!$this->db->insert($arrayDB['table'], $data)) {
-                                    $failedInsertions[] = [
-                                        'absen_id' => $userID,
-                                        'dateTime' => $dateTime,
-                                        'error' => $this->db->error()['message']
-                                    ];
-                                }
-                            } else {
-                                $existingRecordsCount++;
                             }
+                        } else {
+                            $existingRecordsCount++;
+                        }
                         //}
+
+                        $this->db->where('absen_id', $userID);
+                        $this->db->where('tanggal_absen', $dateTime);
+                        $count = $this->db->count_all_results($arrayDB['table']);
+                    
+                        if ($count == 0) {
+                                
+                            $data = [
+                                'absen_id' => $userID,
+                                'tanggal_absen' => $dateTime,
+                                'verified' => $verified,
+                                'status' => $status,
+                                'ipmesin' => $machine
+                            ];
+                            if (!$this->db->insert($arrayDB['table'], $data)) {
+                            $failedInsertions[] = [
+                                'absen_id' => $userID,
+                                'dateTime' => $dateTime,
+                                'error' => $this->db->error()['message']
+                                ];
+                            }
+                        } else {
+                            $existingRecordsCount++;
+                        }
                     }                    
     
                     $this->db->trans_complete();
