@@ -348,11 +348,6 @@
                     var message = "Tarik " + parsedResponse.data.dataCount + " Data" +
                                   " Dari Mesin dengan IP " + parsedResponse.data.datamesin + 
                                   " Sukses.";
-                    
-                    if (parsedResponse.data.dataCount != parsedResponse.data.existingRecordsCount) {
-                        message += " dan, " + parsedResponse.data.existingRecordsCount + 
-                                  " data sudah ada.";
-                    }
 
                     if(parsedResponse.data.dataCount = parsedResponse.data.existingRecordsCount) {
                         message = "Tidak ada data absen baru dari mesin dengan IP " + parsedResponse.data.datamesin +
