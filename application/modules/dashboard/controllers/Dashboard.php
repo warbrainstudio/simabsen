@@ -189,11 +189,10 @@ class Dashboard extends AppBackend
 					$this->TarikDataModel->insertTarikDataLog($tarikdatarecord, $dataCount, $existingRecordsCount);
 				}
 			}else{
-			$response = array(
-				'status' => false,
-				'message' => "Gagal koneksi ke mesin. Cek IP mesin!"
-			);
-		
+				$response = array(
+					'status' => false,
+					'message' => "Gagal koneksi ke mesin. Cek IP mesin!"
+				);
 			}
 		}
 			$response = array(

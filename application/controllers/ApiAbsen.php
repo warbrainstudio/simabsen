@@ -98,7 +98,7 @@ class ApiAbsen extends CI_Controller {
         $table_pegawai = $this->input->get('table_pegawai');
         $IP = $this->input->get('ip');
         $Key = $this->input->get('key');
-        $isAll = $this->input->get('alldata');
+        $isAll = $this->input->get('alldata') === 'true';
         $startDate = $this->input->get('start_date');
         $endDate = $this->input->get('end_date');
 
