@@ -379,7 +379,7 @@ XML;
                             $this->db->update($arrayDB['table_pegawai'], ['nama_lengkap' => $namaPegawai]);
                             
                         } else {*/
-                        if(empty($arrayDB['table_pegawai'])){
+                        if(!empty($arrayDB['table_pegawai'])){
                             $this->db->like('nama_lengkap', $namaPegawai);
                             $count = $this->db->count_all_results($arrayDB['table_pegawai']);
                         
