@@ -238,20 +238,10 @@
                 title: "Tarik Data",
                 text: `Data tanggal ${dateShow} belum ada. Ingin tarik data?`,
                 icon: "warning",
-                buttons: {
-                    cancel: {
-                        text: "Tidak",
-                        value: null,
-                        visible: true,
-                        closeModal: true,
-                    },
-                    confirm: {
-                        text: "Ya",
-                        value: true,
-                        visible: true,
-                        closeModal: true,
-                    }
-                }
+                showCancelButton: true,
+                confirmButtonText: "Ya",
+                cancelButtonText: "Tidak",
+                closeOnConfirm: false
             }).then((result) => {
               fetchData(tanggal);
             });
@@ -274,20 +264,9 @@
                 text: "Data hari ini belum ada. Ingin tarik data?",
                 type: "warning",
                 showCancelButton: true,
-                buttons: {
-                    cancel: {
-                        text: "Tidak",
-                        value: null,
-                        visible: true,
-                        closeModal: true,
-                    },
-                    confirm: {
-                        text: "Ya",
-                        value: true,
-                        visible: true,
-                        closeModal: true,
-                    }
-                }
+                confirmButtonText: "Ya",
+                cancelButtonText: "Tidak",
+                closeOnConfirm: false
             }).then((result) => {
                 if (result.value) {
                   fetchData(tanggal);
