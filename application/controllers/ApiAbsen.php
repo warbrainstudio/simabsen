@@ -98,7 +98,7 @@ class ApiAbsen extends CI_Controller {
         $table_pegawai = $this->input->get('table_pegawai');
         $IP = $this->input->get('ip');
         $Key = $this->input->get('key');
-        $isAll = $this->input->get('alldata') === 'true';
+        $isAll = $this->input->get('alldata');
         $startDate = $this->input->get('start_date');
         $endDate = $this->input->get('end_date');
 
@@ -379,22 +379,23 @@ XML;
                             $this->db->update($arrayDB['table_pegawai'], ['nama_lengkap' => $namaPegawai]);
                             
                         } else {*/
-                            
-                        $this->db->like('nama_lengkap', $namaPegawai);
-                        $count = $this->db->count_all_results($arrayDB['table_pegawai']);
-                    
-                        if ($count > 0) {
-                            // If no records found with partial match, proceed to update
+                        if(empty($arrayDB['table_pegawai'])){
                             $this->db->like('nama_lengkap', $namaPegawai);
-                            if (!$this->db->update($arrayDB['table_pegawai'], ['absen_pegawai_id' => $userID])) {
-                                $failedInsertions[] = [
-                                    'absen_pegawai_id' => $userID,
-                                    'nama_lengkap' => $namaPegawai,
-                                    'error' => $this->db->error()['message']
-                                ];
+                            $count = $this->db->count_all_results($arrayDB['table_pegawai']);
+                        
+                            if ($count > 0) {
+                                // If no records found with partial match, proceed to update
+                                $this->db->like('nama_lengkap', $namaPegawai);
+                                if (!$this->db->update($arrayDB['table_pegawai'], ['absen_pegawai_id' => $userID])) {
+                                    $failedInsertions[] = [
+                                        'absen_pegawai_id' => $userID,
+                                        'nama_lengkap' => $namaPegawai,
+                                        'error' => $this->db->error()['message']
+                                    ];
+                                }
+                            } else {
+                                $existingRecordsCount++;
                             }
-                        } else {
-                            $existingRecordsCount++;
                         }
                         //}
 
