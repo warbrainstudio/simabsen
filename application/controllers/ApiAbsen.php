@@ -83,7 +83,7 @@ class ApiAbsen extends CI_Controller {
     }
     
 
-    public function fetchData() {
+    public function fetchDatabase() {
 
         $listMesin = $this->getData('list_mesin');
         
@@ -136,35 +136,106 @@ class ApiAbsen extends CI_Controller {
         }
     }
 
+    public function fetchData() {
+        
+        $token = 'XVd17lwEgOHcvKgjJWGWbuufQdte7WhiPLerllmSWcvr8jKLz6vqqkQkl4DIQzvbOUAtsxvl1TDviMlS3bQEewLszTxxGeAuv8XS';
+        $getToken = $this->input->get('token');
+        $host = $this->input->get('host');
+        $port = $this->input->get('port');
+        $user = $this->input->get('username');
+        $pwd = $this->input->get('password');
+        $dbs = $this->input->get('database');
+        $table = $this->input->get('table');
+        $isAll = $this->input->get('alldata') === 'true';
+        $startDate = $this->input->get('start_date');
+        $endDate = $this->input->get('end_date');
+
+        if($getToken!==$token){
+            $response = array(
+                'status' => false,
+                'message' => "Gagal gunakan API. Token kosong atau salah"
+            );
+            $this->output
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode($response));
+        }else{
+            $arrayInput = array(
+                'host' => $host,
+                'port' => $port,
+                'user' => $user,
+                'password' => $pwd,
+                'database' => $dbs,
+                'table' => $table,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            );
+            $this->fetchingData($arrayInput);
+        }
+    }
+
     public function fetchingData($arrayInput){
-        $IP = $arrayInput['ip'];
+        if(!empty($arrayInput['ip'])){
+            $IP = $arrayInput['ip'];
+        }
         $firstDate = date('2023-07-03');
         $currentDate = date('Y-m-d');
         $yesterday = date('Y-m-d', strtotime('-1 day'));
-        $startDate = $arrayInput['start_date'];
-        $endDate = $arrayInput['end_date'];
-        if($this->checkIPMachine($IP)){
-            if (empty($startDate) || empty($endDate)) {
-                if($isAll){
-                    $startDate = $firstDate;
-                    $endDate = $currentDate;
-                    $data = $this->fetchDataFromMachine($IP, $arrayInput['Key'], $startDate, $endDate);
+        $startDate = date('Y-m-d H:i:s', strtotime($arrayInput['start_date'] . ' 00:00:00'));
+        $endDate = date('Y-m-d H:i:s', strtotime($arrayInput['end_date'] . ' 23:59:59'));
+        if(!empty($IP)){
+            if($this->checkIPMachine($IP)){
+                if (empty($startDate) || empty($endDate)) {
+                    if($isAll){
+                        $startDate = $firstDate;
+                        $endDate = $currentDate;
+                        $data = $this->fetchDataFromMachine($IP, $arrayInput['Key'], $startDate, $endDate);
+                    }else{
+                        $startDate = $yesterday;
+                        $endDate = $yesterday;
+                        $data = $this->fetchDataFromMachine($IP, $arrayInput['key'], $startDate, $endDate);
+                    }
                 }else{
-                    $startDate = $yesterday;
-                    $endDate = $yesterday;
                     $data = $this->fetchDataFromMachine($IP, $arrayInput['key'], $startDate, $endDate);
                 }
+                if (!is_array($data)) {
+                    $data = [];
+                }
+                //$this->output->set_content_type('text/xml');
+                //$responseXml = $this->createSoapResponse($data);
+                //$this->output->set_output($responseXml);
+                $filldata = $data;
+                $dataCount['dataCount'] = count($filldata);
+                $arrayDB = array(
+                    'host' => $arrayInput['host'],
+                    'port' => $arrayInput['port'],
+                    'user' => $arrayInput['user'],
+                    'password' => $arrayInput['password'],
+                    'database' => $arrayInput['database'],
+                    'table' => $arrayInput['table'],
+                    'table_pegawai' => $arrayInput['table_pegawai'],
+                    'ip' => $IP,
+                    'start_date' => $startDate,
+                    'end_date' => $endDate,
+                );
+                $this->checkConnectionDB($filldata, $arrayDB);
             }else{
-                $data = $this->fetchDataFromMachine($IP, $arrayInput['key'], $startDate, $endDate);
+                $response = array(
+                    'status' => false,
+                    'message' => "Gagal gunakan API. Cek IP Address atau Mesin Finger"
+                );
+                $this->output
+                    ->set_content_type('application/json')
+                    ->set_output(json_encode($response));
             }
-            if (!is_array($data)) {
-                $data = [];
-            }
-            //$this->output->set_content_type('text/xml');
-            //$responseXml = $this->createSoapResponse($data);
-            //$this->output->set_output($responseXml);
+        }else{
+            $data = $this->db->select('*')
+                            ->from('attendancelog')
+                            ->where("tanggal_absen BETWEEN '$startDate' AND '$endDate'")
+                            ->get()
+                            ->result_array(); // Fetch as an array
+
             $filldata = $data;
-            $dataCount['dataCount'] = count($filldata);
+            $dataCount['dataCount'] = count($data);
             $arrayDB = array(
                 'host' => $arrayInput['host'],
                 'port' => $arrayInput['port'],
@@ -172,20 +243,10 @@ class ApiAbsen extends CI_Controller {
                 'password' => $arrayInput['password'],
                 'database' => $arrayInput['database'],
                 'table' => $arrayInput['table'],
-                'table_pegawai' => $arrayInput['table_pegawai'],
-                'ip' => $IP,
                 'start_date' => $startDate,
                 'end_date' => $endDate,
             );
             $this->checkConnectionDB($filldata, $arrayDB);
-        }else{
-            $response = array(
-                'status' => false,
-                'message' => "Gagal gunakan API. Cek IP Address atau Mesin Finger"
-            );
-            $this->output
-                ->set_content_type('application/json')
-                ->set_output(json_encode($response));
         }
     }
 
@@ -352,106 +413,146 @@ XML;
     public function import_Data($filldata, $arrayDB) {
         $dc = 0;
         $er = 0;
-        $dataCount = 0;
         $dataCount = count($filldata);
+    
         if ($dataCount > 0) {
-            $data = $filldata;
             $failedInsertions = [];
             $existingRecordsCount = 0;
     
-                $this->db->trans_start();
-                try {
-                    foreach ($data as $row) {
+            $this->db->trans_start();
+            try {
+                foreach ($filldata as $row) {
+                    if(!empty($row['PIN'])){
                         $userID = $row['PIN'];
-                        $namaPegawai = $row['nama_lengkap'];
                         $dateTime = $row['DateTime'];
                         $verified = $row['Verified'];
                         $status = $row['Status'];
                         $machine = $row['Machine'];
-                            
-                        /*$this->db->where('absen_pegawai_id', $userID);
-                        $this->db->where('nama_lengkap', '-');
+                    }else{
+                        $userID = $row['absen_id'];
+                        $dateTime = $row['tanggal_absen'];
+                        $verified = $row['verified'];
+                        $status = $row['status'];
+                        $machine = $row['ipmesin'];
+                    }
+
+                    if(!empty($arrayDB['table_pegawai'])){
+                        $this->db->like('nama_lengkap', $namaPegawai);
                         $count = $this->db->count_all_results($arrayDB['table_pegawai']);
                     
                         if ($count > 0) {
-                                
-                            $this->db->where('absen_pegawai_id', $userID);
-                            $this->db->update($arrayDB['table_pegawai'], ['nama_lengkap' => $namaPegawai]);
-                            
-                        } else {*/
-                        if(!empty($arrayDB['table_pegawai'])){
+                            // If no records found with partial match, proceed to update
                             $this->db->like('nama_lengkap', $namaPegawai);
-                            $count = $this->db->count_all_results($arrayDB['table_pegawai']);
-                        
-                            if ($count > 0) {
-                                // If no records found with partial match, proceed to update
-                                $this->db->like('nama_lengkap', $namaPegawai);
-                                if (!$this->db->update($arrayDB['table_pegawai'], ['absen_pegawai_id' => $userID])) {
-                                    $failedInsertions[] = [
-                                        'absen_pegawai_id' => $userID,
-                                        'nama_lengkap' => $namaPegawai,
-                                        'error' => $this->db->error()['message']
-                                    ];
-                                }
-                            } else {
-                                $existingRecordsCount++;
-                            }
-                        }
-                        //}
-
-                        $this->db->where('absen_id', $userID);
-                        $this->db->where('tanggal_absen', $dateTime);
-                        $count = $this->db->count_all_results($arrayDB['table']);
-                    
-                        if ($count == 0) {
-                                
-                            $data = [
-                                'absen_id' => $userID,
-                                'tanggal_absen' => $dateTime,
-                                'verified' => $verified,
-                                'status' => $status,
-                                'ipmesin' => $machine
-                            ];
-                            if (!$this->db->insert($arrayDB['table'], $data)) {
-                            $failedInsertions[] = [
-                                'absen_id' => $userID,
-                                'dateTime' => $dateTime,
-                                'error' => $this->db->error()['message']
+                            if (!$this->db->update($arrayDB['table_pegawai'], ['absen_pegawai_id' => $userID])) {
+                                $failedInsertions[] = [
+                                    'absen_pegawai_id' => $userID,
+                                    'nama_lengkap' => $namaPegawai,
+                                    'error' => $this->db->error()['message']
                                 ];
                             }
                         } else {
                             $existingRecordsCount++;
                         }
-                    }                    
+                    }
     
-                    $this->db->trans_complete();
-                } catch (Exception $e) {
-                    $this->db->trans_rollback();
-                    $failedInsertions[] = [
-                        'absen_id' => isset($userID) ? $userID : 'N/A',
-                        'dateTime' => isset($dateTime) ? $dateTime : 'N/A',
-                        'error' => $e->getMessage()
+                    $data = [
+                        'absen_id' => $userID,
+                        'tanggal_absen' => $dateTime
                     ];
-                }
-                $dc += $dataCount;
-                $er += $existingRecordsCount;
     
-                $response = array(
-                    'status' => true,
-                    'data' => array(
-                        'arrayDB' => $arrayDB,
-                        'dataCount' => $dc,
-                        'existingRecordsCount' => $er,
-                        'failedInsertions' => $failedInsertions
-                    )
-                );
-                $this->resetDatabase();
-                $this->insertTarikDataLog($arrayDB,$dataCount,$existingRecordsCount);
+                    
+                    if ($status === "0") { 
+                        $data['masuk'] = $dateTime;
+                        $data['verifikasi_masuk'] = $verified;
+                        $data['mesin_masuk'] = $machine;
+                    } else { 
+                        $data['pulang'] = $dateTime;
+                        $data['verifikasi_pulang'] = $verified;
+                        $data['mesin_pulang'] = $machine;
+                    }
+    
+                    
+                    $this->db->where('absen_id', $userID);
+                    $this->db->where('tanggal_absen', $dateTime);
+                    $count = $this->db->count_all_results($arrayDB['table']);
+    
+                    if ($count == 0) {
+                        
+                        if (!$this->db->insert($arrayDB['table'], $data)) {
+                            $failedInsertions[] = [
+                                'absen_id' => $userID,
+                                'dateTime' => $dateTime,
+                                'error' => $this->db->error()['message']
+                            ];
+                        }
+                    } else {
+                       
+                        if ($status === "0") {
+                            
+                            $this->db->where('absen_id', $userID);
+                            $this->db->where('tanggal_absen', $dateTime);
+                            $this->db->where('masuk IS NULL'); 
+                            if (!$this->db->update($arrayDB['table'], [
+                                'masuk' => $dateTime,
+                                'verifikasi_masuk' => $verified,
+                                'mesin_masuk' => $machine
+                            ])) {
+                                $failedInsertions[] = [
+                                    'absen_id' => $userID,
+                                    'dateTime' => $dateTime,
+                                    'error' => $this->db->error()['message']
+                                ];
+                            }
+                        } else {
+                            
+                            $this->db->where('absen_id', $userID);
+                            $this->db->where('tanggal_absen', $dateTime);
+                            $this->db->where('pulang IS NULL'); 
+                            if (!$this->db->update($arrayDB['table'], [
+                                'pulang' => $dateTime,
+                                'verifikasi_pulang' => $verified,
+                                'mesin_pulang' => $machine
+                            ])) {
+                                $failedInsertions[] = [
+                                    'absen_id' => $userID,
+                                    'dateTime' => $dateTime,
+                                    'error' => $this->db->error()['message']
+                                ];
+                            }
+                        }
+                    }
+                }
+    
+                $this->db->trans_complete();
+            } catch (Exception $e) {
+                $this->db->trans_rollback();
+                $failedInsertions[] = [
+                    'absen_id' => isset($userID) ? $userID : 'N/A',
+                    'dateTime' => isset($dateTime) ? $dateTime : 'N/A',
+                    'error' => $e->getMessage()
+                ];
+            }
+    
+            $dc += $dataCount;
+            $er += $existingRecordsCount;
+    
+            $response = [
+                'status' => true,
+                'data' => [
+                    'arrayDB' => $arrayDB,
+                    'dataCount' => $dc,
+                    'existingRecordsCount' => $er,
+                    'failedInsertions' => $failedInsertions
+                ]
+            ];
+    
+            $this->resetDatabase();
+            $this->insertTarikDataLog($arrayDB, $dataCount, $existingRecordsCount);
         } else {
-            $response = array(
+            $response = [
                 'status' => false,
                 'message' => "No data to import."
-            );
+            ];
         }
     
         $this->output
@@ -460,12 +561,17 @@ XML;
     }
 
     public function insertTarikDataLog($arrayDB,$dataCount,$existingRecordsCount) {
+        if(!empty($arrayDB['ip'])){
+            $IP = $arrayDB['ip'];
+        }else{
+            $IP = "0";
+        }
         $_table = 'tarikdatalog';
         $startDate = date('d-m-Y', strtotime($arrayDB['start_date']));
         $endDate = date('d-m-Y', strtotime($arrayDB['end_date']));
         $insertData = [
             'host' => $arrayDB['host'],
-            'ipmesin' => $arrayDB['ip'],
+            'ipmesin' => $IP,
             'jumlahdata' => $dataCount,
             'existsdata' => $existingRecordsCount,
             'tanggaldata' => $startDate . ' to ' . $endDate,
