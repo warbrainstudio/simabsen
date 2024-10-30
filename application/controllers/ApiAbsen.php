@@ -422,19 +422,18 @@ XML;
             $this->db->trans_start();
             try {
                 foreach ($filldata as $row) {
-                    if(!empty($row['PIN'])){
+                        /*
                         $userID = $row['PIN'];
                         $dateTime = $row['DateTime'];
                         $verified = $row['Verified'];
                         $status = $row['Status'];
                         $machine = $row['Machine'];
-                    }else{
+                        */
                         $userID = $row['absen_id'];
                         $dateTime = $row['tanggal_absen'];
                         $verified = $row['verified'];
                         $status = $row['status'];
                         $machine = $row['ipmesin'];
-                    }
 
                     if(!empty($arrayDB['table_pegawai'])){
                         $this->db->like('nama_lengkap', $namaPegawai);
@@ -547,7 +546,7 @@ XML;
             ];
     
             $this->resetDatabase();
-            $this->insertTarikDataLog($arrayDB, $dataCount, $existingRecordsCount);
+            //$this->insertTarikDataLog($arrayDB, $dataCount, $existingRecordsCount);
         } else {
             $response = [
                 'status' => false,
@@ -561,17 +560,12 @@ XML;
     }
 
     public function insertTarikDataLog($arrayDB,$dataCount,$existingRecordsCount) {
-        if(!empty($arrayDB['ip'])){
-            $IP = $arrayDB['ip'];
-        }else{
-            $IP = "0";
-        }
         $_table = 'tarikdatalog';
         $startDate = date('d-m-Y', strtotime($arrayDB['start_date']));
         $endDate = date('d-m-Y', strtotime($arrayDB['end_date']));
         $insertData = [
             'host' => $arrayDB['host'],
-            'ipmesin' => $IP,
+            'ipmesin' => $arrayDB['ip'],
             'jumlahdata' => $dataCount,
             'existsdata' => $existingRecordsCount,
             'tanggaldata' => $startDate . ' to ' . $endDate,
