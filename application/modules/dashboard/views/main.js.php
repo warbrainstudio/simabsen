@@ -223,7 +223,7 @@
             month = String(now.getMonth() + 1).padStart(2, '0');
         }
 
-        const day = parseInt($(this).text(), 10);
+        const day = $(this).text().padStart(2, '0');
         const clickedDate = new Date(year, month - 1, day);
         const limit = new Date('2023-07-03');
 
@@ -255,7 +255,7 @@
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = $(this).find('strong').text();
+        const day = $(this).find('strong').text().padStart(2, '0');
         const tanggal = `${year}-${month}-${day}`;
         $(`#${_form} .${_section}-start_date`).val(tanggal);
         $(`#${_form} .${_section}-end_date`).val(tanggal);
