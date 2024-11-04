@@ -128,8 +128,8 @@ class AbsenModel extends CI_Model
         if (preg_match('/^\d{4}-\d{2}$/', $dateParam)) {
 
           list($year, $month) = explode('-', $dateParam);
-          $startDate = date('Y-m-d', strtotime("$year-$month-21 -1 month"));
-          $endDate = date('Y-m-d', strtotime("$year-$month-21"));
+          $startDate = date('Y-m-d', strtotime("$year-$month-1"));
+          $endDate = date('Y-m-d', strtotime("last day of $year-$month"));
           $this->db->where("tanggal_absen BETWEEN '$startDate' AND '$endDate'");
 
         }elseif (preg_match('/^\d{4}$/', $dateParam)) {
