@@ -597,22 +597,26 @@ XML;
                                     }
                                 }
 
-                            }else{
+                                if(empty($exists_masuk)){
+                                    $this->db->delete($arrayDB['table'], array('absen_id' => $userID, 'tanggal_absen' => $date));
+                                }
 
-                              $this->db->where('absen_id', $userID);
-                              $this->db->where('tanggal_absen', $date);
-                              if (!$this->db->update($arrayDB['table'], [
-                                  'pulang' => $dateTime,
-                                  'verifikasi_pulang' => $verified,
-                                  'mesin_pulang' => $machine
-                              ])) {
-                                  $failedInsertions[] = [
-                                      'absen_id' => $userID,
-                                      'dateTime' => $date,
-                                      'error' => $this->db->error()['message']
-                                  ];
-                              }
-                              
+                            }else{
+                                if(!empty($exists_masuk)){
+                                    $this->db->where('absen_id', $userID);
+                                    $this->db->where('tanggal_absen', $date);
+                                    if (!$this->db->update($arrayDB['table'], [
+                                        'pulang' => $dateTime,
+                                        'verifikasi_pulang' => $verified,
+                                        'mesin_pulang' => $machine
+                                    ])) {
+                                        $failedInsertions[] = [
+                                            'absen_id' => $userID,
+                                            'dateTime' => $date,
+                                            'error' => $this->db->error()['message']
+                                        ];
+                                    }
+                                }
                             }
                         }
                     }
