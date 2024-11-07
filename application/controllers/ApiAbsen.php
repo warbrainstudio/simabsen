@@ -598,8 +598,23 @@ XML;
                                                     ];
                                                 }
                                             }
+                                        }else{
+                                            if(empty($yesterdayMasuk) && !empty($yesterdayPulang)){
+                                                $this->db->where('absen_id', $userID);
+                                                $this->db->where('tanggal_absen', $yesterday);
+                                                if (!$this->db->update($arrayDB['table'], [
+                                                    'pulang' => $dateTime,
+                                                    'verifikasi_pulang' => $verified,
+                                                    'mesin_pulang' => $machine
+                                                ])) {
+                                                    $failedInsertions[] = [
+                                                        'absen_id' => $userID,
+                                                        'dateTime' => $date,
+                                                        'error' => $this->db->error()['message']
+                                                    ];
+                                                }
+                                            }
                                         }
-
                                     }
                                 }
 
@@ -619,7 +634,20 @@ XML;
                                     }
                                 }
 
-                                if(empty($exists_masuk)){
+                                if(empty($exists_masuk) && !empty($exists_pulang)){
+                                    $this->db->where('absen_id', $userID);
+                                    $this->db->where('tanggal_absen', $yesterday);
+                                    if (!$this->db->update($arrayDB['table'], [
+                                        'pulang' => $dateTime,
+                                        'verifikasi_pulang' => $verified,
+                                        'mesin_pulang' => $machine
+                                    ])) {
+                                        $failedInsertions[] = [
+                                            'absen_id' => $userID,
+                                            'dateTime' => $date,
+                                            'error' => $this->db->error()['message']
+                                        ];
+                                    }
                                     $this->db->delete($arrayDB['table'], array('absen_id' => $userID, 'tanggal_absen' => $date));
                                 }
 
