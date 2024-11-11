@@ -411,8 +411,6 @@ XML;
     
 
     public function import_Data($filldata, $arrayDB) {
-        $dc = 0;
-        $er = 0;
         $dataCount = count($filldata);
     
         if ($dataCount > 0) {
@@ -490,15 +488,21 @@ XML;
                             $this->db->where('pulang IS NULL');
                             $countY = $this->db->count_all_results($arrayDB['table']);
                             if($countY == 0){
-                                $data['pulang'] = $dateTime;
-                                $data['verifikasi_pulang'] = $verified;
-                                $data['mesin_pulang'] = $machine;
-                                if (!$this->db->insert($arrayDB['table'], $data)) {
-                                    $failedInsertions[] = [
-                                        'absen_id' => $userID,
-                                        'dateTime' => $date,
-                                        'error' => $this->db->error()['message']
-                                    ];
+                                $this->db->where('absen_id', $userID);
+                                $this->db->where('tanggal_absen', $yesterday);
+                                $this->db->where('pulang', $dateTime);
+                                $existingRecord = $this->db->get($arrayDB['table'])->row();
+                                if (empty($existingRecord)) {
+                                    $data['pulang'] = $dateTime;
+                                    $data['verifikasi_pulang'] = $verified;
+                                    $data['mesin_pulang'] = $machine;
+                                    if (!$this->db->insert($arrayDB['table'], $data)) {
+                                        $failedInsertions[] = [
+                                            'absen_id' => $userID,
+                                            'dateTime' => $date,
+                                            'error' => $this->db->error()['message']
+                                        ];
+                                    }
                                 }
                             }else{
                                 $this->db->where('absen_id', $userID);
@@ -545,19 +549,26 @@ XML;
                                         ];
                                     }
                                 }else{
-                                    if(!empty($exists_pulang) && $exists_pulang < $dateTime){
-                                        if (!$this->db->insert($arrayDB['table'], [
-                                            'absen_id' => $userID,
-                                            'tanggal_absen' => $date,
-                                            'masuk' => $dateTime,
-                                            'verifikasi_masuk' => $verified,
-                                            'mesin_masuk' => $machine
-                                        ])) {
-                                            $failedInsertions[] = [
+                                    $this->db->where('absen_id', $userID);
+                                    $this->db->where('tanggal_absen', $date);
+                                    $this->db->where('masuk', $dateTime);
+                                    $existingRecord = $this->db->get($arrayDB['table'])->row();
+
+                                    if (empty($existingRecord)) {
+                                        if(!empty($exists_pulang) && $exists_pulang < $dateTime){
+                                            if (!$this->db->insert($arrayDB['table'], [
                                                 'absen_id' => $userID,
-                                                'dateTime' => $date,
-                                                'error' => $this->db->error()['message']
-                                            ];
+                                                'tanggal_absen' => $date,
+                                                'masuk' => $dateTime,
+                                                'verifikasi_masuk' => $verified,
+                                                'mesin_masuk' => $machine
+                                            ])) {
+                                                $failedInsertions[] = [
+                                                    'absen_id' => $userID,
+                                                    'dateTime' => $date,
+                                                    'error' => $this->db->error()['message']
+                                                ];
+                                            }
                                         }
                                     }
                                 }
@@ -619,6 +630,7 @@ XML;
                                 if($exists_pulang < $dateTime){
                                     $this->db->where('absen_id', $userID);
                                     $this->db->where('tanggal_absen', $date);
+                                    $this->db->where('pulang IS NULL');
                                     if (!$this->db->update($arrayDB['table'], [
                                         'pulang' => $dateTime,
                                         'verifikasi_pulang' => $verified,
@@ -663,16 +675,11 @@ XML;
                 ];
             }
     
-            $dc += $dataCount;
-            $er += $existingRecordsCount;
-    
             $response = [
                 'status' => true,
                 'data' => [
-                    'arrayDB' => $arrayDB,
-                    'dataCount' => $dc,
-                    'existingRecordsCount' => $er,
-                    'failedInsertions' => $failedInsertions
+                    'arrayDB' => $arrayDB
+                    
                 ]
             ];
     
