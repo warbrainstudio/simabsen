@@ -243,7 +243,9 @@
                 cancelButtonText: "Tidak",
                 closeOnConfirm: false
             }).then((result) => {
-              fetchData(tanggal);
+              if (result.value) {
+                  fetchData(tanggal);
+              }
             });
         }
     });
