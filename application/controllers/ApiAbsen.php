@@ -420,13 +420,13 @@ XML;
             $this->db->trans_start();
             try {
                 foreach ($filldata as $row) {
-                        /*
-                        $userID = $row['PIN'];
-                        $dateTime = $row['DateTime'];
-                        $verified = $row['Verified'];
-                        $status = $row['Status'];
-                        $machine = $row['Machine'];
-                        */
+                    /*
+                    $userID = $row['PIN'];
+                    $dateTime = $row['DateTime'];
+                    $verified = $row['Verified'];
+                    $status = $row['Status'];
+                    $machine = $row['Machine'];
+                    */
                     $userID = $row['absen_id'];
                     $dateTime = $row['tanggal_absen'];
                     $verified = $row['verified'];
