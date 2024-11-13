@@ -419,7 +419,7 @@ XML;
     
             $this->db->trans_start();
             try {
-foreach ($filldata as $row) {
+                foreach ($filldata as $row) {
                     /*
                     $userID = $row['PIN'];
                     $dateTime = $row['DateTime'];
