@@ -475,7 +475,7 @@ XML;
                             if ($count == 0) {
                                 $data['masuk'] = $dateTime;
                                 $data['verifikasi_masuk'] = $verified;
-                                $data['mesin_masuk'] = $machine;
+                                $data['mesin_masuk'] = "a";
                                 if (!$this->db->insert($arrayDB['table'], $data)) {
                                     $failedInsertions[] = [
                                         'absen_id' => $userID,
@@ -500,7 +500,7 @@ XML;
                                         if (!$this->db->update($arrayDB['table'], [
                                             'masuk' => $dateTime,
                                             'verifikasi_masuk' => $verified,
-                                            'mesin_masuk' => $machine
+                                            'mesin_masuk' => "b"
                                         ])) {
                                             $failedInsertions[] = [
                                                 'absen_id' => $userID,
@@ -509,25 +509,40 @@ XML;
                                             ];
                                         }
                                     }else{
-                                        $this->db->where('absen_id', $userID);
-                                        $this->db->where('tanggal_absen', $date);
-                                        $this->db->where('masuk', $dateTime);
-                                        $existingRecord = $this->db->get($arrayDB['table'])->row();
-    
-                                        if (empty($existingRecord)) {
-                                            if(!empty($exists_pulang) && $exists_pulang < $dateTime){
-                                                if (!$this->db->insert($arrayDB['table'], [
+                                        if(empty($exists_pulang)){
+                                            if (!$this->db->insert($arrayDB['table'], [
+                                                'absen_id' => $userID,
+                                                'tanggal_absen' => $date,
+                                                'masuk' => $dateTime,
+                                                'verifikasi_masuk' => $verified,
+                                                'mesin_masuk' => "c"
+                                            ])) {
+                                                $failedInsertions[] = [
                                                     'absen_id' => $userID,
-                                                    'tanggal_absen' => $date,
-                                                    'masuk' => $dateTime,
-                                                    'verifikasi_masuk' => $verified,
-                                                    'mesin_masuk' => $machine
-                                                ])) {
-                                                    $failedInsertions[] = [
+                                                    'dateTime' => $date,
+                                                    'error' => $this->db->error()['message']
+                                                ];
+                                            }
+                                        }else{
+                                            $this->db->where('absen_id', $userID);
+                                            $this->db->where('tanggal_absen', $date);
+                                            $this->db->where('masuk', $dateTime);
+                                            $existingRecord = $this->db->get($arrayDB['table'])->row();
+                                            if (empty($existingRecord)) {
+                                                if(!empty($exists_pulang) && $exists_pulang < $dateTime){
+                                                    if (!$this->db->insert($arrayDB['table'], [
                                                         'absen_id' => $userID,
-                                                        'dateTime' => $date,
-                                                        'error' => $this->db->error()['message']
-                                                    ];
+                                                        'tanggal_absen' => $date,
+                                                        'masuk' => $dateTime,
+                                                        'verifikasi_masuk' => $verified,
+                                                        'mesin_masuk' => "d"
+                                                    ])) {
+                                                        $failedInsertions[] = [
+                                                            'absen_id' => $userID,
+                                                            'dateTime' => $date,
+                                                            'error' => $this->db->error()['message']
+                                                        ];
+                                                    }
                                                 }
                                             }
                                         }
@@ -543,7 +558,7 @@ XML;
                                         if (!$this->db->update($arrayDB['table'], [
                                             'pulang' => $exists_pulang,
                                             'verifikasi_pulang' => $verifikasi_pulang,
-                                            'mesin_pulang' => $machine
+                                            'mesin_pulang' => "1"
                                         ])) {
                                             $failedInsertions[] = [
                                                 'absen_id' => $userID,
@@ -553,14 +568,14 @@ XML;
                                         }
     
                                         $this->db->where('absen_id', $userID);
-                                        $this->db->where('tanggal_absen', $date);
+                                        $this->db->where('tanggal_absen', $yesterday);
                                         if (!$this->db->update($arrayDB['table'], [
                                             'masuk' => $dateTime,
                                             'verifikasi_masuk' => $verified,
-                                            'mesin_masuk' => $machine,
+                                            'mesin_masuk' => "e",
                                             'pulang' => null,
                                             'verifikasi_pulang' => null,
-                                            'mesin_pulang' => null
+                                            'mesin_pulang' => "tes"
                                         ])) {
                                             $failedInsertions[] = [
                                                 'absen_id' => $userID,
@@ -574,7 +589,7 @@ XML;
                                         if (!$this->db->update($arrayDB['table'], [
                                             'masuk' => $dateTime,
                                             'verifikasi_masuk' => $verified,
-                                            'mesin_masuk' => $machine
+                                            'mesin_masuk' => "f"
                                         ])) {
                                             $failedInsertions[] = [
                                                 'absen_id' => $userID,
@@ -592,8 +607,8 @@ XML;
                                 $this->db->where('absen_id', $userID);
                                 $this->db->where('tanggal_absen', $yesterday);
                                 $this->db->where('pulang IS NULL');
-                                $countY = $this->db->count_all_results($arrayDB['table']);
-                                if($countY == 0){
+                                $pulangCountNull = $this->db->count_all_results($arrayDB['table']);
+                                if($pulangCountNull == 0){
                                     $this->db->where('absen_id', $userID);
                                     $this->db->where('tanggal_absen', $yesterday);
                                     $this->db->where('pulang', $dateTime);
@@ -601,7 +616,7 @@ XML;
                                     if (empty($existingRecord)) {
                                         $data['pulang'] = $dateTime;
                                         $data['verifikasi_pulang'] = $verified;
-                                        $data['mesin_pulang'] = $machine;
+                                        $data['mesin_pulang'] = "2";
                                         if (!$this->db->insert($arrayDB['table'], $data)) {
                                             $failedInsertions[] = [
                                                 'absen_id' => $userID,
@@ -617,7 +632,7 @@ XML;
                                     if (!$this->db->update($arrayDB['table'], [
                                         'pulang' => $dateTime,
                                         'verifikasi_pulang' => $verified,
-                                        'mesin_pulang' => $machine
+                                        'mesin_pulang' => "3"
                                     ])) {
                                         $failedInsertions[] = [
                                             'absen_id' => $userID,
@@ -645,7 +660,7 @@ XML;
                                         if (!$this->db->update($arrayDB['table'], [
                                             'pulang' => $dateTime,
                                             'verifikasi_pulang' => $verified,
-                                            'mesin_pulang' => $machine
+                                            'mesin_pulang' => "4"
                                         ])) {
                                             $failedInsertions[] = [
                                                 'absen_id' => $userID,
@@ -662,7 +677,7 @@ XML;
                                         if (empty($existingRecord)) {
                                             $data['pulang'] = $dateTime;
                                             $data['verifikasi_pulang'] = $verified;
-                                            $data['mesin_pulang'] = $machine;
+                                            $data['mesin_pulang'] = "5";
                                             if (!$this->db->insert($arrayDB['table'], $data)) {
                                                 $failedInsertions[] = [
                                                     'absen_id' => $userID,
@@ -685,7 +700,7 @@ XML;
                                                 if (!$this->db->update($arrayDB['table'], [
                                                     'pulang' => $dateTime,
                                                     'verifikasi_pulang' => $verified,
-                                                    'mesin_pulang' => $machine
+                                                    'mesin_pulang' => "6"
                                                 ])) {
                                                     $failedInsertions[] = [
                                                         'absen_id' => $userID,
@@ -700,7 +715,7 @@ XML;
                                                 if (!$this->db->update($arrayDB['table'], [
                                                     'pulang' => $dateTime,
                                                     'verifikasi_pulang' => $verified,
-                                                    'mesin_pulang' => $machine
+                                                    'mesin_pulang' => "7"
                                                 ])) {
                                                     $failedInsertions[] = [
                                                         'absen_id' => $userID,
@@ -710,18 +725,35 @@ XML;
                                                 }
                                             }
                                         }else{
-                                            if (!$this->db->insert($arrayDB['table'], [
-                                                'absen_id' => $userID,
-                                                'tanggal_absen' => $date,
-                                                'pulang' => $dateTime,
-                                                'verifikasi_pulang' => $verified,
-                                                'mesin_pulang' => $machine
-                                            ])) {
-                                                $failedInsertions[] = [
+                                            if(empty($exists_pulang)){
+                                                $this->db->where('absen_id', $userID);
+                                                $this->db->where('tanggal_absen', $yesterday);
+                                                $this->db->where('pulang IS NULL');
+                                                if (!$this->db->update($arrayDB['table'], [
+                                                    'pulang' => $dateTime,
+                                                    'verifikasi_pulang' => $verified,
+                                                    'mesin_pulang' => "8"
+                                                ])) {
+                                                    $failedInsertions[] = [
+                                                        'absen_id' => $userID,
+                                                        'dateTime' => $date,
+                                                        'error' => $this->db->error()['message']
+                                                    ];
+                                                }
+                                            }else{
+                                                if (!$this->db->insert($arrayDB['table'], [
                                                     'absen_id' => $userID,
-                                                    'dateTime' => $date,
-                                                    'error' => $this->db->error()['message']
-                                                ];
+                                                    'tanggal_absen' => $date,
+                                                    'pulang' => $dateTime,
+                                                    'verifikasi_pulang' => $verified,
+                                                    'mesin_pulang' => "9"
+                                                ])) {
+                                                    $failedInsertions[] = [
+                                                        'absen_id' => $userID,
+                                                        'dateTime' => $date,
+                                                        'error' => $this->db->error()['message']
+                                                    ];
+                                                }
                                             }
                                         }
                                     }
