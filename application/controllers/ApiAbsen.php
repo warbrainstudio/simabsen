@@ -412,6 +412,10 @@ XML;
 
     public function import_Data($filldata, $arrayDB) {
         $dataCount = count($filldata);
+        
+        usort($filldata, function($a, $b) {
+            return strtotime($a['tanggal_absen']) - strtotime($b['tanggal_absen']);
+        });
     
         if ($dataCount > 0) {
             $failedInsertions = [];
