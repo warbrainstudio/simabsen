@@ -587,6 +587,20 @@ XML;
                                                     ];
                                                 }
                                             }
+                                        }else{
+                                            $this->db->where('absen_id', $userID);
+                                            $this->db->where('tanggal_absen', $date);
+                                            if (!$this->db->update($arrayDB['table'], [
+                                                'masuk' => $dateTime,
+                                                'verifikasi_masuk' => $verified,
+                                                'mesin_masuk' => $machine
+                                            ])) {
+                                                $failedInsertions[] = [
+                                                    'absen_id' => $userID,
+                                                    'dateTime' => $date,
+                                                    'error' => $this->db->error()['message']
+                                                ];
+                                            }
                                         }
                                     }else{
                                         $this->db->where('absen_id', $userID);
