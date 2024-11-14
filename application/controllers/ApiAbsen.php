@@ -464,6 +464,30 @@ XML;
                         'absen_id' => $userID,
                         'tanggal_absen' => $date
                     ];
+
+                    /*if($status=="0"){
+                        $data['masuk'] = $dateTime;
+                        $data['verifikasi_masuk'] = $verified;
+                        $data['mesin_masuk'] = $machine;
+                        if (!$this->db->insert($arrayDB['table'], $data)) {
+                            $failedInsertions[] = [
+                                'absen_id' => $userID,
+                                'dateTime' => $date,
+                                'error' => $this->db->error()['message']
+                            ];
+                        }
+                    }else{
+                        $data['pulang'] = $dateTime;
+                        $data['verifikasi_pulang'] = $verified;
+                        $data['mesin_pulang'] = $machine;
+                        if (!$this->db->insert($arrayDB['table'], $data)) {
+                            $failedInsertions[] = [
+                                'absen_id' => $userID,
+                                'dateTime' => $date,
+                                'error' => $this->db->error()['message']
+                            ];
+                        }
+                    }*/
     
                     
                     $this->db->where('absen_id', $userID);
