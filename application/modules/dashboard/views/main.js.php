@@ -84,7 +84,7 @@
               '</div>'
           }*/
         ],
-        order: [[5, 'asc']],
+        //order: [[5, 'asc']],
         autoWidth: !1,
         responsive: {
           details: {
