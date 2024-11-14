@@ -592,8 +592,8 @@ XML;
                                 $this->db->where('absen_id', $userID);
                                 $this->db->where('tanggal_absen', $yesterday);
                                 $this->db->where('pulang IS NULL');
-                                $countY = $this->db->count_all_results($arrayDB['table']);
-                                if($countY == 0){
+                                $pulangNullCount = $this->db->count_all_results($arrayDB['table']);
+                                if($pulangNullCount == 0){
                                     $this->db->where('absen_id', $userID);
                                     $this->db->where('tanggal_absen', $yesterday);
                                     $this->db->where('pulang', $dateTime);
