@@ -542,6 +542,8 @@ XML;
                                             $this->db->where('pulang IS NULL');
                                             $pulangNull = $this->db->get($arrayDB['table'])->row();
                                             if(!empty($pulangNull)){
+                                                $this->db->where('absen_id', $userID);
+                                                $this->db->where('tanggal_absen', $yesterday);
                                                 if (!$this->db->update($arrayDB['table'], [
                                                     'pulang' => $exists_pulang,
                                                     'verifikasi_pulang' => $verifikasi_pulang,
