@@ -15,7 +15,7 @@ class TarikData extends AppBackend {
     }
 
     public function index() {
-      $apiUrl = base_url('api/getData/');
+      /*$apiUrl = base_url('api/getData/');
       $response = file_get_contents($apiUrl);
       $data_api = json_decode($response, true);
       $list_mesin_api = '';
@@ -25,7 +25,7 @@ class TarikData extends AppBackend {
         }
       }else{
         $list_mesin_api = 'Cek Token';
-      }
+      }*/
 
       $data = array(
           'app' => $this->app(),
