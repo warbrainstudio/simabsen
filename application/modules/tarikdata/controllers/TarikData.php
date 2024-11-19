@@ -31,8 +31,8 @@ class TarikData extends AppBackend {
           'app' => $this->app(),
           'main_js' => $this->load_main_js('tarikdata'),
           'card_title' => 'Tarik Data',
-          'list_mesin' => $this->init_list($this->MesinModel->getAll(), 'ipadress','namamesin','status'),
-          'list_mesin_api' => $list_mesin_api,
+          'list_mesin' => $this->init_list($this->MesinModel->getAll([], 'namamesin', 'asc'), 'ipadress','namamesin','status'),
+          //'list_mesin_api' => $list_mesin_api,
       );
   
       $this->template->set('title', $data['card_title'] . ' | ' . $data['app']->app_name, TRUE);
