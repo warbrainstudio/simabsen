@@ -7,11 +7,11 @@
             <div class="table-action">
                 <div class="buttons">
                     <button class="btn btn--raised btn-primary btn--icon-text tarikdata-action-add" data-toggle="modal" data-target="#modal-form-tarikdata">
-                        <i class="zmdi zmdi-cloud-download"></i> Tarik Data
+                        <i class="zmdi zmdi-cloud-download"></i> Tarik Data Manual
                     </button>
-                    <button class="btn btn--raised btn-primary btn--icon-text tarikdata-api-action-add" data-toggle="modal" data-target="#modal-form-tarikdata-api">
+                    <!--<button class="btn btn--raised btn-primary btn--icon-text tarikdata-api-action-add" data-toggle="modal" data-target="#modal-form-tarikdata-api">
                         <i class="zmdi zmdi-cloud-download"></i> Tarik Data API
-                    </button>
+                    </button>-->
                 </div>
             </div>
             <?php include_once('form.php') ?>
