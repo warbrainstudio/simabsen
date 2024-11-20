@@ -120,7 +120,7 @@
               }
             },
           ],
-          order: [[5, 'desc']],
+          //order: [[5, 'desc']],
           autoWidth: !1,
           responsive: {
             details: {

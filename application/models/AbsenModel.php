@@ -23,7 +23,7 @@ class AbsenModel extends CI_Model
         FROM attendancelog att
         LEFT JOIN pegawai p ON att.absen_id = p.absen_pegawai_id
         LEFT JOIN mesin m ON m.ipadress = att.ipmesin
-        ORDER BY p.nama_lengkap,att.tanggal_absen ASC
+        ORDER BY att.tanggal_absen DESC
       ) t
       WHERE 1=1
     ";
@@ -32,7 +32,7 @@ class AbsenModel extends CI_Model
     return $query;
   }
 
-  public function getQueryTime($filter = null)
+  /*public function getQueryTime($filter = null)
   {
       // Construct the base SQL query
       $query = "
@@ -70,7 +70,7 @@ class AbsenModel extends CI_Model
       }
   
       return $query; // Return the constructed SQL query
-  }
+  }*/
     
 
   public function getnullpegawaiQuery($filter = null)
