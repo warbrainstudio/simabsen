@@ -614,7 +614,7 @@ XML;
                                 $this->db->where('absen_id', $userID);
                                 $this->db->where('tanggal_absen', $yesterday);
                                 $this->db->where('pulang IS NULL');
-                                $this->db->order_by('tanggal_absen DESC, masuk DESC');
+                                $this->db->order_by('masuk DESC');
                                 $pulangNull = $this->db->get($arrayDB['table'])->row();
                                 if(empty($pulangNull)){
                                     $this->db->where('absen_id', $userID);
