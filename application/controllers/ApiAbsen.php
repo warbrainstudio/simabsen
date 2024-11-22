@@ -614,6 +614,7 @@ XML;
                                 $this->db->where('absen_id', $userID);
                                 $this->db->where('tanggal_absen', $yesterday);
                                 $this->db->where('pulang IS NULL');
+                                $this->db->order_by('tanggal_absen DESC, masuk DESC');
                                 $pulangNull = $this->db->get($arrayDB['table'])->row();
                                 if(empty($pulangNull)){
                                     $this->db->where('absen_id', $userID);
@@ -646,14 +647,11 @@ XML;
                                         $data['pulang'] = $dateTime;
                                         $data['verifikasi_pulang'] = $verified;
                                         $data['mesin_pulang'] = $machine;
-                                        // Attempt to insert the record first
                                         if ($this->db->insert($arrayDB['table'], $data)) {
-                                            // If insert is successful, delete the previous record if necessary
                                             $this->db->where('absen_id', $userID);
                                             $this->db->where('tanggal_absen', $yesterday);
                                             $this->db->where('pulang IS NULL');
                                             if (!$this->db->delete($arrayDB['table'])) {
-                                                // If the delete fails, handle the error
                                                 $failedDeletions[] = [
                                                     'absen_id' => $userID,
                                                     'tanggal_absen' => $yesterday,
@@ -661,7 +659,6 @@ XML;
                                                 ];
                                             }
                                         } else {
-                                            // Handle the case if the insert failed
                                             $failedInsertions[] = [
                                                 'absen_id' => $userID,
                                                 'dateTime' => $date,
@@ -774,19 +771,16 @@ XML;
                                                         'verifikasi_pulang' => $verified,
                                                         'mesin_pulang' => $machine
                                                     ])) {
-                                                        // Handle the case if the insert failed
                                                         $failedInsertions[] = [
                                                             'absen_id' => $userID,
                                                             'dateTime' => $date,
                                                             'error' => $this->db->error()['message']
                                                         ];
                                                     } else {
-                                                        // If insert is successful, delete the previous record if necessary
                                                         $this->db->where('absen_id', $userID);
                                                         $this->db->where('tanggal_absen', $yesterday);
                                                         $this->db->where('pulang IS NULL');
                                                         if (!$this->db->delete($arrayDB['table'])) {
-                                                            // If the delete fails, handle the error
                                                             $failedDeletions[] = [
                                                                 'absen_id' => $userID,
                                                                 'tanggal_absen' => $yesterday,
