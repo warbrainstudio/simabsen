@@ -648,10 +648,10 @@ XML;
                                         $data['verifikasi_pulang'] = $verified;
                                         $data['mesin_pulang'] = $machine;
                                         if ($this->db->insert($arrayDB['table'], $data)) {
-                                            $this->db->where('absen_id', $userID);
+                                            /*$this->db->where('absen_id', $userID);
                                             $this->db->where('tanggal_absen', $yesterday);
                                             $this->db->where('pulang IS NULL');
-                                            /*if (!$this->db->delete($arrayDB['table'])) {
+                                            if (!$this->db->delete($arrayDB['table'])) {
                                                 $failedDeletions[] = [
                                                     'absen_id' => $userID,
                                                     'tanggal_absen' => $yesterday,
@@ -777,10 +777,10 @@ XML;
                                                             'error' => $this->db->error()['message']
                                                         ];
                                                     } else {
-                                                        $this->db->where('absen_id', $userID);
+                                                        /*$this->db->where('absen_id', $userID);
                                                         $this->db->where('tanggal_absen', $yesterday);
                                                         $this->db->where('pulang IS NULL');
-                                                        /*if (!$this->db->delete($arrayDB['table'])) {
+                                                        if (!$this->db->delete($arrayDB['table'])) {
                                                             $failedDeletions[] = [
                                                                 'absen_id' => $userID,
                                                                 'tanggal_absen' => $yesterday,
