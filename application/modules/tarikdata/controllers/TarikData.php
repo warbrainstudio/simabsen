@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 require_once(APPPATH . 'controllers/AppBackend.php');
 
-class TarikData extends AppBackend {
+class Tarikdata extends AppBackend {
 
     public function __construct() {
         parent::__construct();
