@@ -702,15 +702,51 @@ XML;
                                                 $this->db->where('pulang', $dateTime);
                                                 $existingRecord = $this->db->get($arrayDB['table'])->row();
                                                 if (empty($existingRecord)) {
-                                                    $data['pulang'] = $dateTime;
-                                                    $data['verifikasi_pulang'] = $verified;
-                                                    $data['mesin_pulang'] = $machine;
-                                                    if (!$this->db->insert($arrayDB['table'], $data)) {
-                                                        $failedInsertions[] = [
-                                                            'absen_id' => $userID,
-                                                            'dateTime' => $date,
-                                                            'error' => $this->db->error()['message']
-                                                        ];
+                                                    $this->db->where('absen_id', $userID);
+                                                    $this->db->where('tanggal_absen', $date);
+                                                    $this->db->where('masuk IS NOT NULL');
+                                                    $this->db->where('pulang IS NULL');
+                                                    $checkMistake = $this->db->get($arrayDB['table'])->row();
+                                                    if(empty($checkMistake)){
+                                                        $data['pulang'] = $dateTime;
+                                                        $data['verifikasi_pulang'] = $verified;
+                                                        $data['mesin_pulang'] = $machine;
+                                                        if (!$this->db->insert($arrayDB['table'], $data)) {
+                                                            $failedInsertions[] = [
+                                                                'absen_id' => $userID,
+                                                                'dateTime' => $date,
+                                                                'error' => $this->db->error()['message']
+                                                            ];
+                                                        }
+                                                    }else{
+                                                        $masukMistake = $checkMistake->masuk;
+                                                        if($masukMistake < $dateTime){
+                                                            $this->db->where('absen_id', $userID);
+                                                            $this->db->where('tanggal_absen', $date);
+                                                            $this->db->where('pulang IS NULL');
+                                                            if (!$this->db->update($arrayDB['table'], [
+                                                                'pulang' => $dateTime,
+                                                                'verifikasi_pulang' => $verified,
+                                                                'mesin_pulang' => $machine
+                                                            ])) {
+                                                                $failedInsertions[] = [
+                                                                    'absen_id' => $userID,
+                                                                    'dateTime' => $date,
+                                                                    'error' => $this->db->error()['message']
+                                                                ];
+                                                            }
+                                                        }else{
+                                                            $data['pulang'] = $dateTime;
+                                                            $data['verifikasi_pulang'] = $verified;
+                                                            $data['mesin_pulang'] = $machine;
+                                                            if (!$this->db->insert($arrayDB['table'], $data)) {
+                                                                $failedInsertions[] = [
+                                                                    'absen_id' => $userID,
+                                                                    'dateTime' => $date,
+                                                                    'error' => $this->db->error()['message']
+                                                                ];
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
