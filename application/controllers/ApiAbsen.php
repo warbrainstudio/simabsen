@@ -727,7 +727,7 @@ XML;
 
                                         }
                                     }else{
-
+                                        //insert new data because check is more than 18 hour
                                         $data['pulang'] = $dateTime;
                                         $data['verifikasi_pulang'] = $verified;
                                         $data['mesin_pulang'] = $machine;
